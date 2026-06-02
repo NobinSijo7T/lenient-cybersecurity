@@ -83,6 +83,7 @@
 
 <script setup lang="ts">
 import { gsap } from 'gsap'
+import Lenis from 'lenis'
 
 const navItems = [
   { icon: 'lucide:home', label: 'Home' },
@@ -91,6 +92,8 @@ const navItems = [
   { icon: 'lucide:square-terminal', label: 'Python Scripting' },
   { icon: 'lucide:folder-code', label: 'Projects' }
 ]
+
+let lenis: Lenis | null = null
 
 const activeIndex = ref<number | null>(null)
 const menuRef = ref<HTMLElement | null>(null)
@@ -167,6 +170,26 @@ const clearActiveItem = () => {
 }
 
 onMounted(() => {
+  // Initialize Lenis smooth scrolling
+  lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    orientation: 'vertical',
+    gestureOrientation: 'vertical',
+    smoothWheel: true,
+    wheelMultiplier: 1.0,
+    smoothTouch: false,
+    touchMultiplier: 2,
+    infinite: false
+  })
+
+  // RAF loop for Lenis
+  function raf(time: number) {
+    lenis?.raf(time)
+    requestAnimationFrame(raf)
+  }
+  requestAnimationFrame(raf)
+
   const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
   timeline
@@ -239,6 +262,10 @@ onMounted(() => {
 
   window.addEventListener('scroll', handleScroll, { passive: true })
   handleScroll()
+})
+
+onBeforeUnmount(() => {
+  lenis?.destroy()
 })
 </script>
 
