@@ -144,9 +144,15 @@ export default function HomePage() {
           className={styles.heroBackdrop}
           aria-hidden="true"
         />
+        
+        {/* Hero Background Effects */}
+        <div className={styles.heroFloatingOrbs} aria-hidden="true" />
+        <div className={styles.heroDataStream} aria-hidden="true" />
+        
         <div className={styles.heroGrid} aria-hidden="true" />
         <div className={styles.heroScan} aria-hidden="true" />
         <div className={styles.heroSweep} aria-hidden="true" />
+        
         <section ref={heroContentRef} className={styles.heroContent}>
           <p ref={heroKickerRef} className={styles.heroKicker}>
             Hands-on cyber training
@@ -170,6 +176,14 @@ export default function HomePage() {
         ref={nextSectionRef}
         className={`${styles.nextSection} ${styles.nextSectionOverlay}`}
       >
+        {/* Background Effects */}
+        <div className={styles.nextSectionBgEffects} aria-hidden="true">
+          <div className={styles.nextSectionMatrix} />
+          <div className={styles.nextSectionRadialGlow} />
+          <div className={styles.nextSectionScanlines} />
+          <div className={styles.nextSectionHexPattern} />
+        </div>
+        
         {/* "Begin Your Journey" content */}
         <div className={styles.nextSectionInner}>
           <div className={styles.nextSectionGlow} aria-hidden="true" />

@@ -36,6 +36,60 @@
     linear-gradient(0deg, rgb(7 1 1 / 0.06), rgb(7 1 1 / 0.06));
 }
 
+/* ── Hero Animated Background Effects ──────────────────── */
+.heroFloatingOrbs {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.heroFloatingOrbs::before,
+.heroFloatingOrbs::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+  animation: floatOrb 20s ease-in-out infinite;
+}
+
+.heroFloatingOrbs::before {
+  width: 400px;
+  height: 400px;
+  top: 10%;
+  left: 15%;
+  background: radial-gradient(circle, rgba(255, 50, 30, 0.6), transparent 70%);
+  animation-delay: -5s;
+}
+
+.heroFloatingOrbs::after {
+  width: 350px;
+  height: 350px;
+  bottom: 20%;
+  right: 10%;
+  background: radial-gradient(circle, rgba(255, 80, 60, 0.5), transparent 70%);
+  animation-delay: -12s;
+}
+
+.heroDataStream {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 60, 30, 0.03) 2px,
+      rgba(255, 60, 30, 0.03) 4px
+    );
+  animation: dataStreamScroll 3s linear infinite;
+  opacity: 0.5;
+}
+
 /* ── Hero Backdrop ───────────────────────────────────── */
 .heroBackdrop {
   position: absolute;
@@ -215,6 +269,70 @@
   opacity: 1;
 }
 
+/* ── Next Section Background Effects ──────────────────── */
+.nextSectionBgEffects {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.nextSectionMatrix {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255, 60, 30, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 60, 30, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: center;
+  animation: matrixScroll 15s linear infinite;
+  opacity: 0.4;
+}
+
+.nextSectionRadialGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 800px;
+  height: 800px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 50, 30, 0.15) 0%,
+    rgba(255, 50, 30, 0.08) 30%,
+    transparent 70%
+  );
+  filter: blur(60px);
+  animation: pulseGlow 6s ease-in-out infinite;
+}
+
+.nextSectionScanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    rgba(255, 60, 30, 0.02) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  animation: scanlineMove 8s linear infinite;
+  opacity: 0.6;
+}
+
+.nextSectionHexPattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255, 50, 30, 0.04) 2px, transparent 2px),
+    radial-gradient(circle at 75% 75%, rgba(255, 80, 60, 0.03) 2px, transparent 2px);
+  background-size: 100px 100px;
+  background-position: 0 0, 50px 50px;
+  animation: hexFloat 20s linear infinite;
+  opacity: 0.5;
+}
+
 .nextSectionInner {
   position: relative;
   display: flex;
@@ -300,4 +418,96 @@
 .geminiEffect {
   width: 100%;
   max-width: 100%;
+}
+
+/* ── Keyframe Animations ─────────────────────────────── */
+@keyframes gridDrift {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(2rem, 1.5rem);
+  }
+}
+
+@keyframes scanTravel {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes redSweep {
+  0%, 100% {
+    transform: translateX(-72%);
+    opacity: 0.58;
+  }
+  50% {
+    transform: translateX(72%);
+    opacity: 0.32;
+  }
+}
+
+@keyframes floatOrb {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.15;
+  }
+  33% {
+    transform: translate(30px, -40px) scale(1.1);
+    opacity: 0.22;
+  }
+  66% {
+    transform: translate(-40px, 30px) scale(0.95);
+    opacity: 0.18;
+  }
+}
+
+@keyframes dataStreamScroll {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(4px);
+  }
+}
+
+@keyframes matrixScroll {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(50px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+}
+
+@keyframes scanlineMove {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(4px);
+  }
+}
+
+@keyframes hexFloat {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(100px, 100px);
+  }
 }
