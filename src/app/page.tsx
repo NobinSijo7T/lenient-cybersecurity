@@ -3,9 +3,11 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import Lenis from 'lenis'
+import { useScroll, useTransform } from 'motion/react'
+import { GoogleGeminiEffect } from '@/components/ui/google-gemini-effect'
 import Navigation from '@/components/Navigation'
 import ParallaxHero from '@/components/ParallaxHero'
-import CustomCursorAlternate from '@/components/CustomCursorAlternate'
+import CustomCursorCrosshair from '@/components/CustomCursorCrosshair'
 import ClickSpark from '@/components/ClickSpark'
 import PageLoader from '@/components/PageLoader'
 import styles from './page.module.css'
@@ -17,6 +19,18 @@ export default function HomePage() {
   const heroCopyRef = useRef<HTMLDivElement>(null)
   const nextSectionRef = useRef<HTMLElement>(null)
   const heroBackdropRef = useRef<HTMLDivElement>(null)
+  const geminiContainerRef = useRef<HTMLDivElement>(null)
+
+  // Scroll-driven path lengths for the Gemini effect
+  const { scrollYProgress } = useScroll({
+    target: geminiContainerRef,
+    offset: ['start 85%', 'end end'],
+  })
+  const path1 = useTransform(scrollYProgress, [0, 1], [0, 1])
+  const path2 = useTransform(scrollYProgress, [0, 1], [0, 1])
+  const path3 = useTransform(scrollYProgress, [0, 1], [0, 1])
+  const path4 = useTransform(scrollYProgress, [0, 1], [0, 1])
+  const path5 = useTransform(scrollYProgress, [0, 1], [0, 1])
 
   useEffect(() => {
     // ── Lenis smooth scrolling ──────────────────────────
@@ -29,14 +43,16 @@ export default function HomePage() {
       wheelMultiplier: 1.0,
     })
 
+    let reqId: number
     function raf(time: number) {
       lenis.raf(time)
-      requestAnimationFrame(raf)
+      reqId = requestAnimationFrame(raf)
     }
-    requestAnimationFrame(raf)
+    reqId = requestAnimationFrame(raf)
 
     // ── GSAP entrance animations ────────────────────────
-    const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } })
+    const ctx = gsap.context(() => {
+      const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
     timeline
       .from(`.${styles.heroBackdrop}`, {
@@ -65,16 +81,17 @@ export default function HomePage() {
         '-=0.55'
       )
 
-    // Backdrop float
-    gsap.to(`.${styles.heroBackdrop}`, {
-      scale: 1.045,
-      xPercent: -1.15,
-      yPercent: 0.65,
-      duration: 16,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut',
-    })
+      // Backdrop float
+      gsap.to(`.${styles.heroBackdrop}`, {
+        scale: 1.045,
+        xPercent: -1.15,
+        yPercent: 0.65,
+        duration: 16,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+      })
+    }, heroContentRef) // Scope GSAP to avoid global leaks
 
     // ── Sticky scroll effect ────────────────────────────
     const handleScroll = () => {
@@ -106,6 +123,8 @@ export default function HomePage() {
 
     return () => {
       lenis.destroy()
+      cancelAnimationFrame(reqId)
+      ctx.revert() // Kill all GSAP animations in this context
       window.removeEventListener('scroll', handleScroll)
     }
   }, [])
@@ -150,8 +169,8 @@ export default function HomePage() {
       <section
         ref={nextSectionRef}
         className={`${styles.nextSection} ${styles.nextSectionOverlay}`}
-        style={{ minHeight: '100vh' }}
       >
+        {/* "Begin Your Journey" content */}
         <div className={styles.nextSectionInner}>
           <div className={styles.nextSectionGlow} aria-hidden="true" />
           <h2 className={styles.nextSectionTitle}>Begin Your Journey</h2>
@@ -160,10 +179,18 @@ export default function HomePage() {
             labs and real-world challenges.
           </p>
         </div>
+
+        {/* Google Gemini Effect — scroll-driven lines */}
+        <div ref={geminiContainerRef} className={styles.geminiWrapper}>
+          <GoogleGeminiEffect
+            pathLengths={[path1, path2, path3, path4, path5]}
+            className={styles.geminiEffect}
+          />
+        </div>
       </section>
 
       {/* Custom Cursor */}
-      <CustomCursorAlternate />
+      <CustomCursorCrosshair />
 
       {/* Click Spark Effect */}
       <ClickSpark />

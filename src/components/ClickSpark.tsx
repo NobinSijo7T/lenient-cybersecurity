@@ -32,7 +32,9 @@ export default function ClickSpark() {
           duration: 0.6,
           ease: 'power2.out',
           onComplete: () => {
-            spark.remove()
+            if (spark.parentNode) {
+              spark.remove()
+            }
           },
         })
       }

@@ -90,13 +90,11 @@
 .heroScan {
   z-index: -2;
   background:
-    repeating-linear-gradient(
-      180deg,
+    repeating-linear-gradient(180deg,
       transparent 0,
       transparent 1.1rem,
       rgb(255 255 255 / 0.035) 1.16rem,
-      transparent 1.28rem
-    );
+      transparent 1.28rem);
   mix-blend-mode: screen;
   opacity: 0.26;
   animation: scanTravel 5.5s linear infinite;
@@ -104,14 +102,12 @@
 
 .heroSweep {
   z-index: -2;
-  background: linear-gradient(
-    105deg,
-    transparent 16%,
-    rgb(255 56 36 / 0.04) 38%,
-    rgb(255 255 255 / 0.13) 48%,
-    rgb(255 42 22 / 0.06) 58%,
-    transparent 78%
-  );
+  background: linear-gradient(105deg,
+      transparent 16%,
+      rgb(255 56 36 / 0.04) 38%,
+      rgb(255 255 255 / 0.13) 48%,
+      rgb(255 42 22 / 0.06) 58%,
+      transparent 78%);
   mix-blend-mode: screen;
   opacity: 0.58;
   transform: translateX(-72%);
@@ -184,10 +180,11 @@
 .nextSection {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: clamp(4rem, 8vw, 8rem) clamp(1.25rem, 5vw, 4rem);
+  padding: clamp(4rem, 8vw, 8rem) 0 0;
   background: #070101;
   overflow: hidden;
 }
@@ -195,12 +192,10 @@
 .nextSectionOverlay {
   position: relative;
   z-index: 2;
-  background: linear-gradient(
-    180deg,
-    rgba(7, 1, 1, 0) 0%,
-    rgba(7, 1, 1, 0.95) 10%,
-    rgba(7, 1, 1, 1) 20%
-  );
+  background: linear-gradient(180deg,
+      rgba(7, 1, 1, 0) 0%,
+      rgba(7, 1, 1, 0.95) 10%,
+      rgba(7, 1, 1, 1) 20%);
 }
 
 .nextSectionOverlay::before {
@@ -228,6 +223,7 @@
   gap: 1.4rem;
   text-align: center;
   max-width: 580px;
+  padding: 0 clamp(1.25rem, 5vw, 4rem);
 }
 
 .nextSectionGlow {
@@ -288,4 +284,20 @@
     width: min(100%, 22rem);
     margin-top: 1.55rem;
   }
+}
+
+/* ── Gemini Effect Wrapper ───────────────────────────── */
+.geminiWrapper {
+  width: 100%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-top: -12rem;
+}
+
+.geminiEffect {
+  width: 100%;
+  max-width: 100%;
 }
