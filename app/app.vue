@@ -69,7 +69,7 @@
     </main>
 
     <!-- Next Section slides over hero -->
-    <section ref="nextSection" class="next-section next-section-overlay">
+    <section ref="nextSection" class="next-section next-section-overlay" style="min-height: 100vh;">
       <div class="next-section__inner">
         <div class="next-section__glow" aria-hidden="true"></div>
         <h2 class="next-section__title">Begin Your Journey</h2>
@@ -81,6 +81,9 @@
 
     <!-- Custom Cursor -->
     <CustomCursor />
+    
+    <!-- Click Spark Effect -->
+    <ClickSpark />
   </div>
 </template>
 
