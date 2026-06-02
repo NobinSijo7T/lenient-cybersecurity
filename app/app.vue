@@ -78,6 +78,9 @@
         </p>
       </div>
     </section>
+
+    <!-- Custom Cursor -->
+    <CustomCursor />
   </div>
 </template>
 

@@ -8,6 +8,16 @@ export default defineNuxtConfig({
     appManifest: false
   },
 
+  alias: {
+    '@': './',
+    '~': './',
+    '@components': './components',
+    '@composables': './composables',
+    '@utils': './utils',
+    '@assets': './assets',
+    '@public': './public'
+  },
+
   vite: {
     optimizeDeps: {
       include: ['lenis', 'gsap']
