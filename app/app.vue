@@ -1,6 +1,8 @@
 <template>
-  <div class="site-shell">
+  <div>
     <NuxtRouteAnnouncer />
+    
+    <!-- Fixed Navigation -->
     <header ref="navBar" class="nav-wrap" aria-label="Primary navigation">
       <div class="nav-brand" aria-label="Lenient Cyber">
         <img class="nav-brand__logo" src="/white.png" alt="Lenient Cyber" />
@@ -44,8 +46,9 @@
       </nav>
     </header>
 
-    <main class="hero" aria-labelledby="hero-title">
-      <div class="hero__backdrop" aria-hidden="true"></div>
+    <!-- Hero Section with Sticky Effect -->
+    <main class="hero hero-sticky" aria-labelledby="hero-title">
+      <div ref="heroBackdrop" class="hero__backdrop" aria-hidden="true"></div>
       <div class="hero__grid" aria-hidden="true"></div>
       <div class="hero__scan" aria-hidden="true"></div>
       <div class="hero__sweep" aria-hidden="true"></div>
@@ -64,6 +67,17 @@
         </div>
       </section>
     </main>
+
+    <!-- Next Section slides over hero -->
+    <section ref="nextSection" class="next-section next-section-overlay">
+      <div class="next-section__inner">
+        <div class="next-section__glow" aria-hidden="true"></div>
+        <h2 class="next-section__title">Begin Your Journey</h2>
+        <p class="next-section__text">
+          Choose your path and start mastering cybersecurity with hands-on labs and real-world challenges.
+        </p>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -89,6 +103,8 @@ const heroContent = ref<HTMLElement | null>(null)
 const heroKicker = ref<HTMLElement | null>(null)
 const heroTitle = ref<HTMLElement | null>(null)
 const heroCopy = ref<HTMLElement | null>(null)
+const heroBackdrop = ref<HTMLElement | null>(null)
+const nextSection = ref<HTMLElement | null>(null)
 
 const setMenuItemRef = (element: Element | null, index: number) => {
   if (element instanceof HTMLElement) {
@@ -198,6 +214,31 @@ onMounted(() => {
     yoyo: true,
     ease: 'sine.inOut'
   })
+
+  // Sticky scroll effect: transition backgrounds
+  const handleScroll = () => {
+    const scrollY = window.scrollY
+    const heroHeight = window.innerHeight
+    
+    // When scrolled past hero, show hero2 background
+    if (scrollY > heroHeight * 0.5) {
+      nextSection.value?.classList.add('is-visible')
+      
+      // Fade hero.png to hero2.png
+      const scrollProgress = Math.min(Math.max((scrollY - heroHeight * 0.5) / (heroHeight * 0.5), 0), 1)
+      if (heroBackdrop.value) {
+        heroBackdrop.value.style.setProperty('--hero2-opacity', scrollProgress.toString())
+      }
+    } else {
+      nextSection.value?.classList.remove('is-visible')
+      if (heroBackdrop.value) {
+        heroBackdrop.value.style.setProperty('--hero2-opacity', '0')
+      }
+    }
+  }
+
+  window.addEventListener('scroll', handleScroll, { passive: true })
+  handleScroll()
 })
 </script>
 
@@ -233,11 +274,6 @@ body,
 
 body {
   overflow-x: hidden;
-}
-
-.site-shell {
-  min-height: 100svh;
-  background: #070101;
 }
 
 .nav-wrap {
@@ -423,6 +459,12 @@ body {
   padding: clamp(7rem, 10vw, 9rem) clamp(1.25rem, 5vw, 5rem) clamp(2rem, 5vw, 4rem);
 }
 
+.hero-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
 .hero::before,
 .hero::after {
   position: absolute;
@@ -448,11 +490,29 @@ body {
   position: absolute;
   inset: 0;
   z-index: -4;
+  transform-origin: center;
+  --hero2-opacity: 0;
+}
+
+.hero__backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   background-image: url('/hero.png');
   background-position: center;
   background-size: cover;
-  transform-origin: center;
   filter: saturate(1.2) contrast(1.08) brightness(1.12);
+}
+
+.hero__backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('/hero2.png');
+  background-position: center;
+  background-size: cover;
+  filter: saturate(1.2) contrast(1.08) brightness(1.12);
+  opacity: var(--hero2-opacity);
 }
 
 .hero__grid,
@@ -603,6 +663,87 @@ body {
   font-size: clamp(1rem, 1.35vw, 1.18rem);
   line-height: 1.35;
   text-shadow: 0 4px 24px rgb(0 0 0 / 0.86);
+}
+
+.next-section {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: clamp(4rem, 8vw, 8rem) clamp(1.25rem, 5vw, 4rem);
+  background: #070101;
+  overflow: hidden;
+}
+
+.next-section-overlay {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(
+    180deg,
+    rgba(7, 1, 1, 0) 0%,
+    rgba(7, 1, 1, 0.95) 10%,
+    rgba(7, 1, 1, 1) 20%
+  );
+}
+
+.next-section-overlay::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url('/hero2.png');
+  background-position: center;
+  background-size: cover;
+  filter: saturate(1.2) contrast(1.08) brightness(0.8);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.next-section-overlay.is-visible::before {
+  opacity: 1;
+}
+
+.next-section__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  text-align: center;
+  max-width: 580px;
+}
+
+.next-section__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 420px;
+  height: 420px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 40, 20, 0.12) 0%, transparent 65%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.next-section__title {
+  margin: 0;
+  color: #fff7f2;
+  font-family: 'Audiowide', system-ui, sans-serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  line-height: 1.1;
+  text-shadow:
+    0 0 18px rgba(255, 31, 31, 0.4),
+    0 4px 24px rgba(0, 0, 0, 0.7);
+}
+
+.next-section__text {
+  margin: 0;
+  max-width: 26rem;
+  color: rgba(255, 232, 228, 0.7);
+  font-size: clamp(0.95rem, 1.3vw, 1.12rem);
+  line-height: 1.55;
 }
 
 @media (max-width: 700px) {
