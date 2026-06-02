@@ -1,21 +1,27 @@
 {
-  "style": "new-york",
-  "typescript": true,
-  "tsConfigPath": "./tsconfig.json",
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "radix-lyra",
+  "rsc": true,
+  "tsx": true,
   "tailwind": {
     "config": "tailwind.config.js",
-    "css": "assets/css/tailwind.css",
+    "css": "src/app/globals.css",
     "baseColor": "neutral",
     "cssVariables": true,
     "prefix": ""
   },
-  "framework": "nuxt",
+  "iconLibrary": "phosphor",
+  "rtl": false,
   "aliases": {
-    "components": "~/components",
-    "utils": "~/utils",
-    "ui": "~/components/ui",
-    "lib": "~/lib",
-    "hooks": "~/composables"
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "hooks": "@/hooks"
   },
-  "iconLibrary": "lucide"
+  "menuColor": "default",
+  "menuAccent": "subtle",
+  "registries": {
+    "@aceternity": "https://ui.aceternity.com/registry/{name}.json"
+  }
 }

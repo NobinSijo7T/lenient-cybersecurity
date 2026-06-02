@@ -1,26 +1,4 @@
-<template>
-  <div class="page-loader">
-    <div class="cyber-grid"></div>
-    <div class="glow-orbs">
-      <div class="orb orb-1"></div>
-      <div class="orb orb-2"></div>
-      <div class="orb orb-3"></div>
-    </div>
-    <div class="logo-wrapper">
-      <img src="/white.png" alt="Lenient Cyber" class="logo" />
-      <div class="loader-bar">
-        <div class="loader-progress"></div>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script setup lang="ts">
-// Clean, simple loader component
-</script>
-
-<style scoped>
-.page-loader {
+.loader {
   position: fixed;
   top: 0;
   left: 0;
@@ -32,10 +10,15 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  transition: opacity 0.5s ease;
+}
+
+.loaderFading {
+  opacity: 0;
 }
 
 /* Animated cyber grid background */
-.cyber-grid {
+.cyberGrid {
   position: absolute;
   inset: 0;
   background-image:
@@ -56,7 +39,7 @@
 }
 
 /* Glowing orbs */
-.glow-orbs {
+.glowOrbs {
   position: absolute;
   inset: 0;
 }
@@ -71,7 +54,7 @@
   animation-timing-function: ease-in-out;
 }
 
-.orb-1 {
+.orb1 {
   width: 400px;
   height: 400px;
   background: radial-gradient(circle, rgba(255, 30, 30, 0.6) 0%, transparent 70%);
@@ -80,7 +63,7 @@
   animation-name: float1;
 }
 
-.orb-2 {
+.orb2 {
   width: 300px;
   height: 300px;
   background: radial-gradient(circle, rgba(200, 20, 20, 0.5) 0%, transparent 70%);
@@ -90,7 +73,7 @@
   animation-duration: 10s;
 }
 
-.orb-3 {
+.orb3 {
   width: 250px;
   height: 250px;
   background: radial-gradient(circle, rgba(150, 30, 40, 0.4) 0%, transparent 70%);
@@ -129,7 +112,7 @@
 }
 
 /* Logo and loading bar */
-.logo-wrapper {
+.logoWrapper {
   position: relative;
   z-index: 10;
   display: flex;
@@ -154,7 +137,7 @@
   }
 }
 
-.loader-bar {
+.loaderBar {
   width: 240px;
   height: 3px;
   background: rgba(255, 255, 255, 0.1);
@@ -165,7 +148,7 @@
     inset 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-.loader-progress {
+.loaderProgress {
   height: 100%;
   background: linear-gradient(
     90deg,
@@ -207,23 +190,22 @@
     width: 160px;
   }
   
-  .loader-bar {
+  .loaderBar {
     width: 180px;
   }
   
-  .orb-1 {
+  .orb1 {
     width: 250px;
     height: 250px;
   }
   
-  .orb-2 {
+  .orb2 {
     width: 200px;
     height: 200px;
   }
   
-  .orb-3 {
+  .orb3 {
     width: 180px;
     height: 180px;
   }
 }
-</style>
