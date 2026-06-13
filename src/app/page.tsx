@@ -12,6 +12,8 @@ import ScrollVideoHero from '@/components/ScrollVideoHero'
 import CustomCursorCrosshair from '@/components/CustomCursorCrosshair'
 import ClickSpark from '@/components/ClickSpark'
 import PageLoader from '@/components/PageLoader'
+import CTAButton from '@/components/CTAButton'
+import Footer from '@/components/Footer'
 import styles from './page.module.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -256,6 +258,7 @@ export default function HomePage() {
             Choose your path and start mastering cybersecurity with hands-on
             labs and real-world challenges.
           </p>
+          <CTAButton className={styles.ctaButton} />
         </div>
 
         {/* Google Gemini Effect — scroll-driven lines */}
@@ -266,6 +269,9 @@ export default function HomePage() {
           />
         </div>
       </section>
+
+      {/* Footer */}
+      <Footer />
 
       {/* Custom Cursor */}
       <CustomCursorCrosshair />

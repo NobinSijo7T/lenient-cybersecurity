@@ -298,6 +298,12 @@
   text-align: center;
   max-width: 580px;
   padding: 0 clamp(1.25rem, 5vw, 4rem);
+  z-index: 10;
+}
+
+.ctaButton {
+  margin-top: 1rem;
+  z-index: 10;
 }
 
 .nextSectionGlow {
@@ -369,11 +375,15 @@
   justify-content: center;
   overflow: hidden;
   margin-top: -12rem;
+  position: relative;
+  z-index: 1;
 }
 
 .geminiEffect {
   width: 100%;
   max-width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Keyframe Animations ─────────────────────────────── */
