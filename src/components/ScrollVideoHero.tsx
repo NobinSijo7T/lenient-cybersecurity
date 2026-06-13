@@ -21,9 +21,8 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
 
   // ── All scrub state lives in refs — zero React re-renders ──────────
   const targetTimeRef = useRef(0)   // where scroll says we should be
-  const smoothTimeRef = useRef(0)   // lerped toward target
   const durationRef = useRef(0)     // video total duration (set on metadata)
-  const lastFrameRef = useRef(-1)   // last frame bucket written to DOM
+  const rafIdRef = useRef<number | null>(null)  // animation frame ID
 
   useEffect(() => {
     const video = videoRef.current
@@ -52,33 +51,31 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
       return () => video.removeEventListener('loadedmetadata', onMetadata)
     }
 
-    // ── Lerp settings ───────────────────────────────────────────────
-    // Mobile: slightly faster lerp (less GPU work per frame); lower frame bucket
-    const lerpFactor = isMobile ? 0.18 : 0.12
-    const framePrecision = isMobile ? 30 : 60  // frame bucket granularity
+    // Pre-decode video frames for smoother playback
+    video.play().then(() => video.pause()).catch(() => {})
 
-    // Active flag: pauses ticker without removing it from gsap.ticker
+    // Active flag
     let isTicking = true
 
-    // ── GSAP ticker — runs in sync with ScrollTrigger's RAF loop ────
-    const tickerFn = () => {
+    // ── Direct RAF loop for immediate video updates ────────────────
+    const updateVideo = () => {
       if (!isTicking) return
+
       const duration = durationRef.current
-      if (duration <= 0) return
-
-      // Lerp smooth time toward scroll target
-      smoothTimeRef.current +=
-        (targetTimeRef.current - smoothTimeRef.current) * lerpFactor
-
-      // Bucket into frame slots — avoid writing video.currentTime redundantly
-      const frame = Math.round(smoothTimeRef.current * framePrecision)
-      if (frame !== lastFrameRef.current) {
-        lastFrameRef.current = frame
-        const t = Math.max(0, Math.min(smoothTimeRef.current, duration))
-        if (videoRef.current) videoRef.current.currentTime = t
+      if (duration > 0 && videoRef.current) {
+        const targetTime = targetTimeRef.current
+        const currentTime = videoRef.current.currentTime
+        
+        // Direct update with minimal threshold
+        if (Math.abs(currentTime - targetTime) > 0.001) {
+          videoRef.current.currentTime = targetTime
+        }
       }
+
+      rafIdRef.current = requestAnimationFrame(updateVideo)
     }
-    gsap.ticker.add(tickerFn)
+
+    rafIdRef.current = requestAnimationFrame(updateVideo)
 
     // ── ScrollTrigger — pin + progress → video timeline ────────────
     const scrollEnd = isMobile
@@ -91,10 +88,12 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
       end: scrollEnd,
       pin: true,
       anticipatePin: 1,
+      scrub: 0.5,  // Use built-in scrub for smoothness
       invalidateOnRefresh: true,
       onUpdate: (self) => {
         const duration = durationRef.current
         if (duration > 0) {
+          // Directly map scroll progress to video time
           targetTimeRef.current = self.progress * duration
         }
       },
@@ -103,19 +102,33 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
     // ── Pause ticker when browser tab hidden ───────────────────────
     const onVisibility = () => {
       isTicking = !document.hidden
+      if (isTicking && !rafIdRef.current) {
+        rafIdRef.current = requestAnimationFrame(updateVideo)
+      }
     }
     document.addEventListener('visibilitychange', onVisibility)
 
     // ── Pause ticker when hero scrolled out of viewport ────────────
     const io = new IntersectionObserver(
-      ([entry]) => { isTicking = entry.isIntersecting },
+      ([entry]) => {
+        isTicking = entry.isIntersecting
+        if (isTicking && !rafIdRef.current) {
+          rafIdRef.current = requestAnimationFrame(updateVideo)
+        } else if (!isTicking && rafIdRef.current) {
+          cancelAnimationFrame(rafIdRef.current)
+          rafIdRef.current = null
+        }
+      },
       { threshold: 0 }
     )
     io.observe(section)
 
     return () => {
       isTicking = false
-      gsap.ticker.remove(tickerFn)
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current)
+        rafIdRef.current = null
+      }
       st.kill()
       io.disconnect()
       document.removeEventListener('visibilitychange', onVisibility)
@@ -139,7 +152,12 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
         muted
         playsInline
         preload="auto"
+        disablePictureInPicture
+        disableRemotePlayback
         aria-hidden="true"
+        style={{
+          willChange: 'auto',
+        }}
       />
 
       {/* Stacked content — z-index above video */}

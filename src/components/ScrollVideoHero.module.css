@@ -20,10 +20,13 @@
   pointer-events: none;
   user-select: none;
   /* GPU-accelerated compositing layer */
-  will-change: transform;
-  transform: translateZ(0);
+  transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   filter: saturate(1.2) contrast(1.08) brightness(1.12);
+  /* Better video rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 /* ── Mobile: lighter filtering to reduce GPU load ────── */
