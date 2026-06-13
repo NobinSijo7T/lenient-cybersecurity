@@ -6,6 +6,8 @@ import styles from './ClickSpark.module.css'
 
 export default function ClickSpark() {
   useEffect(() => {
+    const sparks = new Set<HTMLDivElement>()
+    
     const createSpark = (x: number, y: number) => {
       const container = document.querySelector(`.${styles.container}`)
       if (!container) return
@@ -23,6 +25,7 @@ export default function ClickSpark() {
         spark.style.top = `${y}px`
 
         container.appendChild(spark)
+        sparks.add(spark)
 
         gsap.to(spark, {
           x: Math.cos(angle) * velocity,
@@ -32,8 +35,13 @@ export default function ClickSpark() {
           duration: 0.6,
           ease: 'power2.out',
           onComplete: () => {
-            if (spark.parentNode) {
-              spark.remove()
+            try {
+              if (spark && spark.parentNode) {
+                spark.parentNode.removeChild(spark)
+              }
+              sparks.delete(spark)
+            } catch (error) {
+              // Silently catch if element was already removed
             }
           },
         })
@@ -48,6 +56,19 @@ export default function ClickSpark() {
 
     return () => {
       document.removeEventListener('click', handleClick)
+      
+      // Clean up any remaining sparks
+      sparks.forEach((spark) => {
+        try {
+          gsap.killTweensOf(spark)
+          if (spark && spark.parentNode) {
+            spark.parentNode.removeChild(spark)
+          }
+        } catch (error) {
+          // Silently catch cleanup errors
+        }
+      })
+      sparks.clear()
     }
   }, [])
 

@@ -114,6 +114,24 @@ export default function CustomCursorCrosshair() {
     return () => {
       window.removeEventListener('mousemove', onMouseMove)
       document.documentElement.classList.remove('custom-cursor-active')
+      
+      // Remove all event listeners before disconnecting observer
+      const interactives = document.querySelectorAll(
+        `a, 
+         button, 
+         [role="button"],
+         [class*="menuBarButton"],
+         [class*="navBrand"],
+         [class*="heroCopyCard"],
+         [class*="menuBar"],
+         [class*="navBrandLogo"]`
+      )
+      
+      interactives.forEach((el) => {
+        el.removeEventListener('mouseenter', onMouseEnter)
+        el.removeEventListener('mouseleave', onMouseLeave)
+      })
+      
       observer.disconnect()
       clearTimeout(timeoutId)
     }

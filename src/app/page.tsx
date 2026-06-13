@@ -2,15 +2,18 @@
 
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import { useScroll, useTransform } from 'motion/react'
 import { GoogleGeminiEffect } from '@/components/ui/google-gemini-effect'
 import Navigation from '@/components/Navigation'
-import ParallaxHero from '@/components/ParallaxHero'
+import ScrollVideoHero from '@/components/ScrollVideoHero'
 import CustomCursorCrosshair from '@/components/CustomCursorCrosshair'
 import ClickSpark from '@/components/ClickSpark'
 import PageLoader from '@/components/PageLoader'
 import styles from './page.module.css'
+
+gsap.registerPlugin(ScrollTrigger)
 
 export default function HomePage() {
   const heroContentRef = useRef<HTMLElement>(null)
@@ -19,7 +22,6 @@ export default function HomePage() {
   const heroCopyRef = useRef<HTMLDivElement>(null)
   const nextSectionRef = useRef<HTMLElement>(null)
   const geminiContainerRef = useRef<HTMLDivElement>(null)
-  const bgVideoRef = useRef<HTMLVideoElement>(null)
 
   // Scroll-driven path lengths for the Gemini effect
   const { scrollYProgress } = useScroll({
@@ -32,17 +34,6 @@ export default function HomePage() {
   const path4 = useTransform(scrollYProgress, [0, 1], [0, 1])
   const path5 = useTransform(scrollYProgress, [0, 1], [0, 1])
 
-  // ── Force video autoplay (React muted prop bug workaround) ──
-  useEffect(() => {
-    const vid = bgVideoRef.current
-    if (vid) {
-      vid.muted = true
-      vid.play().catch(() => {
-        const resume = () => { vid.play(); document.removeEventListener('click', resume) }
-        document.addEventListener('click', resume, { once: true })
-      })
-    }
-  }, [])
 
   useEffect(() => {
     // ── Lenis smooth scrolling ──────────────────────────
@@ -55,6 +46,9 @@ export default function HomePage() {
       wheelMultiplier: 1.0,
     })
 
+    // ── Sync Lenis → ScrollTrigger (required for pin accuracy) ─────
+    lenis.on('scroll', ScrollTrigger.update)
+
     let reqId: number
     function raf(time: number) {
       lenis.raf(time)
@@ -66,44 +60,18 @@ export default function HomePage() {
     const ctx = gsap.context(() => {
       const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-    timeline
-      .from(`.${styles.heroBackdrop}`, {
-        scale: 1.08,
-        opacity: 0,
-        duration: 1.4,
-        ease: 'power2.out',
-      })
-      .from(
-        heroContentRef.current,
-        {
-          opacity: 0,
-          y: 26,
-          duration: 0.9,
-        },
-        '-=0.85'
-      )
-      .from(
-        [heroKickerRef.current, heroTitleRef.current, heroCopyRef.current],
-        {
-          opacity: 0,
-          y: 34,
-          duration: 0.8,
-          stagger: 0.14,
-        },
-        '-=0.55'
-      )
-
-      // Backdrop float
-      gsap.to(`.${styles.heroBackdrop}`, {
-        scale: 1.045,
-        xPercent: -1.15,
-        yPercent: 0.65,
-        duration: 16,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      })
-    }, heroContentRef) // Scope GSAP to avoid global leaks
+      timeline
+        .from(
+          heroContentRef.current,
+          { opacity: 0, y: 26, duration: 0.9, ease: 'power2.out' },
+          0.3
+        )
+        .from(
+          [heroKickerRef.current, heroTitleRef.current, heroCopyRef.current],
+          { opacity: 0, y: 34, duration: 0.8, stagger: 0.14 },
+          '-=0.55'
+        )
+    }, heroContentRef)
 
     // ── Sticky scroll effect ────────────────────────────
     const handleScroll = () => {
@@ -135,29 +103,17 @@ export default function HomePage() {
       {/* Fixed Navigation */}
       <Navigation />
 
-      {/* Hero Section with Sticky Effect */}
-      <main className={`${styles.hero} ${styles.heroSticky}`} aria-labelledby="hero-title">
-        {/* Video Background */}
-        <video
-          ref={bgVideoRef}
-          src="/bg_vid.mp4"
-          className={styles.heroBackdrop}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          aria-hidden="true"
-        />
-        
-        {/* Hero Background Effects */}
+      {/* ── Scroll-Scrubbed Cinematic Hero ───────────────── */}
+      <ScrollVideoHero src="/bg_vid.mp4" className={styles.hero}>
+
+        {/* Atmospheric overlays */}
         <div className={styles.heroFloatingOrbs} aria-hidden="true" />
         <div className={styles.heroDataStream} aria-hidden="true" />
-        
         <div className={styles.heroGrid} aria-hidden="true" />
         <div className={styles.heroScan} aria-hidden="true" />
         <div className={styles.heroSweep} aria-hidden="true" />
-        
+
+        {/* Hero text content */}
         <section ref={heroContentRef} className={styles.heroContent}>
           <p ref={heroKickerRef} className={styles.heroKicker}>
             Hands-on cyber training
@@ -174,7 +130,8 @@ export default function HomePage() {
             </p>
           </div>
         </section>
-      </main>
+
+      </ScrollVideoHero>
 
       {/* Next Section slides over hero */}
       <section

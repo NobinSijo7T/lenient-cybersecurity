@@ -1,0 +1,42 @@
+/* ── Hero Section Wrapper ────────────────────────────── */
+.heroSection {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: #070101;
+  isolation: isolate;
+}
+
+/* ── Scroll-Scrubbed Background Video ───────────────── */
+.heroVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  /* GPU-accelerated compositing layer */
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  filter: saturate(1.2) contrast(1.08) brightness(1.12);
+}
+
+/* ── Mobile: lighter filtering to reduce GPU load ────── */
+@media (max-width: 767px) {
+  .heroVideo {
+    filter: saturate(1.1) contrast(1.05) brightness(1.08);
+  }
+}
+
+/* ── Accessibility: reduced-motion fallback ──────────── */
+@media (prefers-reduced-motion: reduce) {
+  .heroVideo {
+    /* Freeze to first frame via object-position trick */
+    animation: none;
+  }
+}
