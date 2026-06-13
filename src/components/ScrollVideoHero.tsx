@@ -21,8 +21,10 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
 
   // ── All scrub state lives in refs — zero React re-renders ──────────
   const targetTimeRef = useRef(0)   // where scroll says we should be
+  const currentTimeRef = useRef(0)  // current interpolated time
   const durationRef = useRef(0)     // video total duration (set on metadata)
   const rafIdRef = useRef<number | null>(null)  // animation frame ID
+  const lastUpdateTimeRef = useRef(0)  // throttle video updates
 
   useEffect(() => {
     const video = videoRef.current
@@ -41,6 +43,7 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
     const onMetadata = () => {
       durationRef.current = video.duration
       video.currentTime = 0
+      currentTimeRef.current = 0
     }
     video.addEventListener('loadedmetadata', onMetadata)
     if (video.readyState >= 1) onMetadata()
@@ -57,18 +60,42 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
     // Active flag
     let isTicking = true
 
-    // ── Direct RAF loop for immediate video updates ────────────────
-    const updateVideo = () => {
+    // ── Frame interpolation settings per best practices ────────────
+    const lerpFactor = 0.08  // Recommended value from optimization guide
+    const maxUpdatesPerSecond = isMobile ? 24 : 30  // Limit update frequency
+    const minFrameDelta = 1000 / maxUpdatesPerSecond  // Time between updates
+    const seekThreshold = 0.01  // Ignore tiny updates (10ms)
+
+    // ── Single RAF loop for smooth interpolation ────────────────────
+    const updateVideo = (timestamp: number) => {
       if (!isTicking) return
 
       const duration = durationRef.current
       if (duration > 0 && videoRef.current) {
         const targetTime = targetTimeRef.current
-        const currentTime = videoRef.current.currentTime
         
-        // Direct update with minimal threshold
-        if (Math.abs(currentTime - targetTime) > 0.001) {
-          videoRef.current.currentTime = targetTime
+        // Linear interpolation toward target (Apple-style smoothing)
+        const delta = targetTime - currentTimeRef.current
+        
+        // Snap to target if very close
+        if (Math.abs(delta) < 0.001) {
+          currentTimeRef.current = targetTime
+        } else {
+          currentTimeRef.current += delta * lerpFactor
+        }
+        
+        // Throttle video seeking to maxUpdatesPerSecond
+        const timeSinceLastUpdate = timestamp - lastUpdateTimeRef.current
+        
+        if (timeSinceLastUpdate >= minFrameDelta) {
+          const videoCurrentTime = videoRef.current.currentTime
+          const timeDiff = Math.abs(currentTimeRef.current - videoCurrentTime)
+          
+          // Only update if difference exceeds threshold
+          if (timeDiff > seekThreshold) {
+            videoRef.current.currentTime = Math.max(0, Math.min(currentTimeRef.current, duration))
+            lastUpdateTimeRef.current = timestamp
+          }
         }
       }
 
@@ -78,9 +105,10 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
     rafIdRef.current = requestAnimationFrame(updateVideo)
 
     // ── ScrollTrigger — pin + progress → video timeline ────────────
+    // Mobile: reduced scroll distance for performance
     const scrollEnd = isMobile
-      ? () => `+=${window.innerHeight * 2.5}`   // 250 vh on mobile
-      : () => `+=${window.innerHeight * 4}`      // 400 vh on desktop
+      ? () => `+=${window.innerHeight * 2.5}`   // 250vh on mobile
+      : () => `+=${window.innerHeight * 4}`      // 400vh on desktop
 
     const st = ScrollTrigger.create({
       trigger: section,
@@ -88,12 +116,14 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
       end: scrollEnd,
       pin: true,
       anticipatePin: 1,
-      scrub: 0.5,  // Use built-in scrub for smoothness
+      scrub: 1,  // Recommended scrub value for smooth motion
       invalidateOnRefresh: true,
+      fastScrollEnd: true,
+      normalizeScroll: true,  // Better cross-browser scroll normalization
       onUpdate: (self) => {
         const duration = durationRef.current
         if (duration > 0) {
-          // Directly map scroll progress to video time
+          // CRITICAL: Only store target, never update video here
           targetTimeRef.current = self.progress * duration
         }
       },
@@ -155,9 +185,7 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
         disablePictureInPicture
         disableRemotePlayback
         aria-hidden="true"
-        style={{
-          willChange: 'auto',
-        }}
+        crossOrigin="anonymous"
       />
 
       {/* Stacked content — z-index above video */}

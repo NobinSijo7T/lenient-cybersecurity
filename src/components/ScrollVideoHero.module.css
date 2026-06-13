@@ -19,20 +19,25 @@
   z-index: 0;
   pointer-events: none;
   user-select: none;
-  /* GPU-accelerated compositing layer */
+  
+  /* GPU-accelerated compositing - Apple-style optimization */
+  will-change: transform;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  filter: saturate(1.2) contrast(1.08) brightness(1.12);
-  /* Better video rendering */
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
+  
+  /* Layout containment for better performance */
+  contain: paint layout;
+  
+  /* Lighter filters to reduce GPU load */
+  filter: saturate(1.15) contrast(1.05) brightness(1.08);
 }
 
-/* ── Mobile: lighter filtering to reduce GPU load ────── */
+/* ── Mobile: further reduce GPU load ────────────────── */
 @media (max-width: 767px) {
   .heroVideo {
-    filter: saturate(1.1) contrast(1.05) brightness(1.08);
+    filter: saturate(1.08) contrast(1.02) brightness(1.05);
+    /* Even lighter filtering on mobile */
   }
 }
 
