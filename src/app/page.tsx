@@ -6,6 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import { useScroll, useTransform } from 'motion/react'
 import { GoogleGeminiEffect } from '@/components/ui/google-gemini-effect'
+import { Timeline, type TimelineEntry } from '@/components/ui/timeline'
 import Navigation from '@/components/Navigation'
 import ScrollVideoHero from '@/components/ScrollVideoHero'
 import CustomCursorCrosshair from '@/components/CustomCursorCrosshair'
@@ -14,6 +15,99 @@ import PageLoader from '@/components/PageLoader'
 import styles from './page.module.css'
 
 gsap.registerPlugin(ScrollTrigger)
+
+const learningPath: TimelineEntry[] = [
+  {
+    title: 'Foundations',
+    content: (
+      <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
+        <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">
+          Build a strong base in networking, Linux, and the systems that every
+          security professional needs to understand.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {['Networking', 'Linux', 'Security fundamentals'].map((skill) => (
+            <span
+              key={skill}
+              className="rounded-full border border-[#ff5a45]/25 bg-[#ff321e]/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#ff9b8e]"
+            >
+              {skill}
+            </span>
+          ))}
+        </div>
+      </div>
+    ),
+  },
+  {
+    title: 'Break Things',
+    content: (
+      <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
+        <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">
+          Learn how attackers think by testing applications, finding
+          vulnerabilities, and documenting what you discover.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {['Ethical hacking', 'Web security', 'Penetration testing'].map(
+            (skill) => (
+              <span
+                key={skill}
+                className="rounded-full border border-[#ff5a45]/25 bg-[#ff321e]/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#ff9b8e]"
+              >
+                {skill}
+              </span>
+            )
+          )}
+        </div>
+      </div>
+    ),
+  },
+  {
+    title: 'Build Defenses',
+    content: (
+      <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
+        <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">
+          Turn insight into protection with threat analysis, incident response,
+          and automation powered by Python.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {['Threat detection', 'Incident response', 'Python automation'].map(
+            (skill) => (
+              <span
+                key={skill}
+                className="rounded-full border border-[#ff5a45]/25 bg-[#ff321e]/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#ff9b8e]"
+              >
+                {skill}
+              </span>
+            )
+          )}
+        </div>
+      </div>
+    ),
+  },
+  {
+    title: 'Ship Proof',
+    content: (
+      <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
+        <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">
+          Turn your work into a focused portfolio with documented labs,
+          security reports, and projects that demonstrate real capability.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {['Portfolio projects', 'Security reports', 'Career readiness'].map(
+            (skill) => (
+              <span
+                key={skill}
+                className="rounded-full border border-[#ff5a45]/25 bg-[#ff321e]/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#ff9b8e]"
+              >
+                {skill}
+              </span>
+            )
+          )}
+        </div>
+      </div>
+    ),
+  },
+]
 
 export default function HomePage() {
   const heroContentRef = useRef<HTMLElement>(null)
@@ -132,6 +226,14 @@ export default function HomePage() {
         </section>
 
       </ScrollVideoHero>
+
+      {/* Practical learning path */}
+      <Timeline
+        data={learningPath}
+        eyebrow="Your roadmap"
+        title="From curious beginner to capable defender"
+        description="A practical path built around the skills, tools, and real-world challenges that move your cybersecurity career forward."
+      />
 
       {/* Next Section slides over hero */}
       <section
