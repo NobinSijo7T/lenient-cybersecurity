@@ -7,8 +7,11 @@ import styles from './ClickSpark.module.css'
 export default function ClickSpark() {
   useEffect(() => {
     const sparks = new Set<HTMLDivElement>()
+    let isCleanedUp = false
     
     const createSpark = (x: number, y: number) => {
+      if (isCleanedUp) return
+      
       const container = document.querySelector(`.${styles.container}`)
       if (!container) return
 
@@ -35,13 +38,16 @@ export default function ClickSpark() {
           duration: 0.6,
           ease: 'power2.out',
           onComplete: () => {
+            if (isCleanedUp) return
+            
             try {
-              if (spark && spark.parentNode) {
+              sparks.delete(spark)
+              if (spark && spark.parentNode && document.contains(spark)) {
                 spark.parentNode.removeChild(spark)
               }
-              sparks.delete(spark)
             } catch (error) {
               // Silently catch if element was already removed
+              console.debug('Spark cleanup error:', error)
             }
           },
         })
@@ -49,23 +55,27 @@ export default function ClickSpark() {
     }
 
     const handleClick = (e: MouseEvent) => {
-      createSpark(e.clientX, e.clientY)
+      if (!isCleanedUp) {
+        createSpark(e.clientX, e.clientY)
+      }
     }
 
     document.addEventListener('click', handleClick)
 
     return () => {
+      isCleanedUp = true
       document.removeEventListener('click', handleClick)
       
       // Clean up any remaining sparks
       sparks.forEach((spark) => {
         try {
           gsap.killTweensOf(spark)
-          if (spark && spark.parentNode) {
+          if (spark && spark.parentNode && document.contains(spark)) {
             spark.parentNode.removeChild(spark)
           }
         } catch (error) {
           // Silently catch cleanup errors
+          console.debug('Spark cleanup error:', error)
         }
       })
       sparks.clear()

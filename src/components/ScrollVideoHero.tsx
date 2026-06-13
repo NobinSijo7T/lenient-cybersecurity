@@ -119,7 +119,6 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
       scrub: 1,  // Recommended scrub value for smooth motion
       invalidateOnRefresh: true,
       fastScrollEnd: true,
-      normalizeScroll: true,  // Better cross-browser scroll normalization
       onUpdate: (self) => {
         const duration = durationRef.current
         if (duration > 0) {
