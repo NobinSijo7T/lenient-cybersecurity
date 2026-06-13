@@ -47,6 +47,7 @@ const ParallaxHero = forwardRef<ParallaxHeroHandle, ParallaxHeroProps>(
     const particleCanvas = useRef<HTMLCanvasElement>(null)
     const contentOverlay = useRef<HTMLDivElement>(null)
     const scrollIndicator = useRef<HTMLDivElement>(null)
+    const bgVideoRef = useRef<HTMLVideoElement>(null)
 
     // Expose contentOverlay to parent
     useImperativeHandle(ref, () => ({
@@ -144,6 +145,19 @@ const ParallaxHero = forwardRef<ParallaxHeroHandle, ParallaxHeroProps>(
     }, [])
 
     // ── Mount: Particles + ScrollTrigger ──────────────────
+    // ── Force video autoplay (React muted prop bug workaround) ────────
+    useEffect(() => {
+      const vid = bgVideoRef.current
+      if (vid) {
+        vid.muted = true
+        vid.play().catch(() => {
+          // Autoplay blocked — retry on first user interaction
+          const resume = () => { vid.play(); document.removeEventListener('click', resume) }
+          document.addEventListener('click', resume, { once: true })
+        })
+      }
+    }, [])
+
     useEffect(() => {
       // Initialize particles
       if (particleCanvas.current) {
@@ -315,12 +329,16 @@ const ParallaxHero = forwardRef<ParallaxHeroHandle, ParallaxHeroProps>(
           <div ref={camera} className={styles.camera}>
             {/* Hero 1: Wide shot */}
             <div ref={hero1Layer} className={`${styles.layer} ${styles.layerHero1}`}>
-              <img
-                src="/hero.png"
-                alt=""
+              <video
+                ref={bgVideoRef}
+                src="/bg_vid.mp4"
                 className={styles.img}
-                draggable={false}
-                fetchPriority="high"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+                aria-hidden="true"
               />
             </div>
 

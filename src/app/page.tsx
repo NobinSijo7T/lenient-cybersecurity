@@ -18,8 +18,8 @@ export default function HomePage() {
   const heroTitleRef = useRef<HTMLHeadingElement>(null)
   const heroCopyRef = useRef<HTMLDivElement>(null)
   const nextSectionRef = useRef<HTMLElement>(null)
-  const heroBackdropRef = useRef<HTMLDivElement>(null)
   const geminiContainerRef = useRef<HTMLDivElement>(null)
+  const bgVideoRef = useRef<HTMLVideoElement>(null)
 
   // Scroll-driven path lengths for the Gemini effect
   const { scrollYProgress } = useScroll({
@@ -31,6 +31,18 @@ export default function HomePage() {
   const path3 = useTransform(scrollYProgress, [0, 1], [0, 1])
   const path4 = useTransform(scrollYProgress, [0, 1], [0, 1])
   const path5 = useTransform(scrollYProgress, [0, 1], [0, 1])
+
+  // ── Force video autoplay (React muted prop bug workaround) ──
+  useEffect(() => {
+    const vid = bgVideoRef.current
+    if (vid) {
+      vid.muted = true
+      vid.play().catch(() => {
+        const resume = () => { vid.play(); document.removeEventListener('click', resume) }
+        document.addEventListener('click', resume, { once: true })
+      })
+    }
+  }, [])
 
   useEffect(() => {
     // ── Lenis smooth scrolling ──────────────────────────
@@ -97,24 +109,10 @@ export default function HomePage() {
     const handleScroll = () => {
       const scrollY = window.scrollY
       const heroHeight = window.innerHeight
-
       if (scrollY > heroHeight * 0.5) {
         nextSectionRef.current?.classList.add(styles.isVisible)
-        const scrollProgress = Math.min(
-          Math.max((scrollY - heroHeight * 0.5) / (heroHeight * 0.5), 0),
-          1
-        )
-        if (heroBackdropRef.current) {
-          heroBackdropRef.current.style.setProperty(
-            '--hero2-opacity',
-            scrollProgress.toString()
-          )
-        }
       } else {
         nextSectionRef.current?.classList.remove(styles.isVisible)
-        if (heroBackdropRef.current) {
-          heroBackdropRef.current.style.setProperty('--hero2-opacity', '0')
-        }
       }
     }
 
@@ -139,9 +137,16 @@ export default function HomePage() {
 
       {/* Hero Section with Sticky Effect */}
       <main className={`${styles.hero} ${styles.heroSticky}`} aria-labelledby="hero-title">
-        <div
-          ref={heroBackdropRef}
+        {/* Video Background */}
+        <video
+          ref={bgVideoRef}
+          src="/bg_vid.mp4"
           className={styles.heroBackdrop}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
           aria-hidden="true"
         />
         
