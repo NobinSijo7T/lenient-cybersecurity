@@ -2,6 +2,7 @@
 
 import {
   motion,
+  useMotionTemplate,
   useScroll,
   useTransform,
 } from "motion/react";
@@ -97,15 +98,16 @@ const BackgroundLayer = ({
   const blur = useTransform(
     progress,
     [fadeInStart, fadeInEnd, fadeOutStart, fadeOutEnd],
-    ["blur(4px)", "blur(0px)", "blur(0px)", "blur(3px)"]
+    [4, 0, 0, 3]
   );
-  
+
   // Level-up glow effect
   const brightness = useTransform(
     progress,
     [fadeInStart, start, start + 0.02, fadeInEnd],
     [1, 1, 1.4, 1]
   );
+  const filter = useMotionTemplate`blur(${blur}px) brightness(${brightness})`;
 
   return (
     <motion.div
@@ -117,9 +119,8 @@ const BackgroundLayer = ({
         rotateX,
         rotateY,
         z,
-        filter: blur,
+        filter,
         backgroundImage: `url(${image})`,
-        brightness,
       }}
       aria-hidden="true"
     />

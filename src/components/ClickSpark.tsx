@@ -42,9 +42,7 @@ export default function ClickSpark() {
             
             try {
               sparks.delete(spark)
-              if (spark && spark.parentNode && document.contains(spark)) {
-                spark.parentNode.removeChild(spark)
-              }
+              spark.remove()
             } catch (error) {
               // Silently catch if element was already removed
               console.debug('Spark cleanup error:', error)
@@ -70,9 +68,7 @@ export default function ClickSpark() {
       sparks.forEach((spark) => {
         try {
           gsap.killTweensOf(spark)
-          if (spark && spark.parentNode && document.contains(spark)) {
-            spark.parentNode.removeChild(spark)
-          }
+          spark.remove()
         } catch (error) {
           // Silently catch cleanup errors
           console.debug('Spark cleanup error:', error)

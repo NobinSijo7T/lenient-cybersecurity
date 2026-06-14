@@ -1,4 +1,9 @@
 /* ── Hero Section Wrapper ────────────────────────────── */
+.heroPinSpacer {
+  position: relative;
+  width: 100%;
+}
+
 .heroSection {
   position: relative;
   width: 100%;

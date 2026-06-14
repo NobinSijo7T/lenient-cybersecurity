@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './ScrollVideoHero.module.css'
@@ -16,6 +16,7 @@ interface ScrollVideoHeroProps {
 }
 
 const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroProps) => {
+  const spacerRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
 
@@ -26,10 +27,11 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
   const rafIdRef = useRef<number | null>(null)  // animation frame ID
   const lastUpdateTimeRef = useRef(0)  // throttle video updates
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    const spacer = spacerRef.current
     const video = videoRef.current
     const section = sectionRef.current
-    if (!video || !section) return
+    if (!spacer || !video || !section) return
 
     const isMobile = window.matchMedia('(max-width: 767px)').matches
     const prefersReducedMotion = window.matchMedia(
@@ -115,6 +117,7 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
       start: 'top top',
       end: scrollEnd,
       pin: true,
+      pinSpacer: spacer,
       anticipatePin: 1,
       scrub: 1,  // Recommended scrub value for smooth motion
       invalidateOnRefresh: true,
@@ -166,29 +169,31 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
   }, [])
 
   return (
-    <div
-      ref={sectionRef}
-      className={[styles.heroSection, className].filter(Boolean).join(' ')}
-      role="region"
-      aria-labelledby="hero-title"
-    >
-      {/* Scroll-scrubbed background video */}
-      <video
-        ref={videoRef}
-        src={src}
-        poster={poster}
-        className={styles.heroVideo}
-        muted
-        playsInline
-        preload="auto"
-        disablePictureInPicture
-        disableRemotePlayback
-        aria-hidden="true"
-        crossOrigin="anonymous"
-      />
+    <div ref={spacerRef} className={styles.heroPinSpacer}>
+      <div
+        ref={sectionRef}
+        className={[styles.heroSection, className].filter(Boolean).join(' ')}
+        role="region"
+        aria-labelledby="hero-title"
+      >
+        {/* Scroll-scrubbed background video */}
+        <video
+          ref={videoRef}
+          src={src}
+          poster={poster}
+          className={styles.heroVideo}
+          muted
+          playsInline
+          preload="auto"
+          disablePictureInPicture
+          disableRemotePlayback
+          aria-hidden="true"
+          crossOrigin="anonymous"
+        />
 
-      {/* Stacked content — z-index above video */}
-      {children}
+        {/* Stacked content — z-index above video */}
+        {children}
+      </div>
     </div>
   )
 }
