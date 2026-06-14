@@ -31,7 +31,7 @@ interface BackgroundLayerProps {
   progress: MotionValue<number>;
 }
 
-const defaultImages = ["/page3.png", "/hero2.png", "/hero2.png", "/hero2.png"];
+const defaultImages = ["/1.png", "/2.png", "/3.png", "/4.png"];
 
 const BackgroundLayer = ({
   image,
@@ -72,7 +72,7 @@ const BackgroundLayer = ({
   const scale = useTransform(
     progress,
     [fadeInStart, fadeInEnd, fadeOutEnd],
-    [1.12, 1, 1.08]
+    [1.01, 1, 1.005]
   );
   const y = useTransform(
     progress,
