@@ -36,6 +36,11 @@
     0 12px 40px rgba(0, 0, 0, 0.5);
 }
 
+.ctaButton:focus-visible {
+  outline: 2px solid #fff7f2;
+  outline-offset: 4px;
+}
+
 .ctaButton:active {
   transform: scale(0.98);
 }

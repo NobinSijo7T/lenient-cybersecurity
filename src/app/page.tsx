@@ -20,7 +20,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const learningPath: TimelineEntry[] = [
   {
-    title: 'Foundations',
+    title: 'Level 1: Foundations',
     content: (
       <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
         <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">
@@ -41,7 +41,7 @@ const learningPath: TimelineEntry[] = [
     ),
   },
   {
-    title: 'Break Things',
+    title: 'Level 2: Break Things',
     content: (
       <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
         <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">
@@ -64,7 +64,7 @@ const learningPath: TimelineEntry[] = [
     ),
   },
   {
-    title: 'Build Defenses',
+    title: 'Level 3: Build Defenses',
     content: (
       <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
         <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">
@@ -87,7 +87,7 @@ const learningPath: TimelineEntry[] = [
     ),
   },
   {
-    title: 'Ship Proof',
+    title: 'Level 4: Ship Proof',
     content: (
       <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
         <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">

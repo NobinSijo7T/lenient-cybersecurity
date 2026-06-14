@@ -19,16 +19,6 @@ export default function CTAButton({ href = '#', onClick, className }: CTAButtonP
     const glow = glowRef.current
     if (!button || !glow) return
 
-    // Entrance animation
-    gsap.from(button, {
-      opacity: 0,
-      y: 20,
-      scale: 0.95,
-      duration: 0.8,
-      ease: 'power3.out',
-      delay: 0.3,
-    })
-
     // Hover effect
     const handleMouseEnter = () => {
       gsap.to(glow, {
@@ -75,7 +65,7 @@ export default function CTAButton({ href = '#', onClick, className }: CTAButtonP
       className={`${styles.ctaButton} ${className || ''}`}
     >
       <span ref={glowRef} className={styles.glow} aria-hidden="true" />
-      <span className={styles.text}>Join Community</span>
+      <span className={styles.text}>Join community</span>
       <span className={styles.icon} aria-hidden="true">
         <svg
           width="20"

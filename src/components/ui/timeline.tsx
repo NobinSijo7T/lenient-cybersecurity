@@ -72,32 +72,39 @@ const BackgroundLayer = ({
   const scale = useTransform(
     progress,
     [fadeInStart, fadeInEnd, fadeOutEnd],
-    [1.01, 1, 1.005]
+    [1.05, 1, 1.02]
   );
   const y = useTransform(
     progress,
     [fadeInStart, fadeInEnd, fadeOutEnd],
-    ["60px", "0px", "-40px"]
+    ["80px", "0px", "-60px"]
   );
   const rotateX = useTransform(
     progress,
     [fadeInStart, fadeInEnd, fadeOutEnd],
-    [1, 0, -1]
+    [2, 0, -2]
   );
   const rotateY = useTransform(
     progress,
     [fadeInStart, fadeInEnd, fadeOutEnd],
-    [-2, 0, 2]
+    [-3, 0, 3]
   );
   const z = useTransform(
     progress,
     [fadeInStart, fadeInEnd, fadeOutEnd],
-    [0, 120, 0]
+    [0, 180, 0]
   );
   const blur = useTransform(
     progress,
     [fadeInStart, fadeInEnd, fadeOutStart, fadeOutEnd],
-    ["blur(3px)", "blur(0px)", "blur(0px)", "blur(2px)"]
+    ["blur(4px)", "blur(0px)", "blur(0px)", "blur(3px)"]
+  );
+  
+  // Level-up glow effect
+  const brightness = useTransform(
+    progress,
+    [fadeInStart, start, start + 0.02, fadeInEnd],
+    [1, 1, 1.4, 1]
   );
 
   return (
@@ -112,6 +119,7 @@ const BackgroundLayer = ({
         z,
         filter: blur,
         backgroundImage: `url(${image})`,
+        brightness,
       }}
       aria-hidden="true"
     />
