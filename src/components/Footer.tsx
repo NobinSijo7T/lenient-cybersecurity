@@ -38,11 +38,9 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   const navLinks = [
-    { label: 'Home', href: '#' },
-    { label: 'Courses', href: '#courses' },
-    { label: 'Projects', href: '#projects' },
-    { label: 'About', href: '#about' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'Home', href: '#home' },
+    { label: 'Roadmap', href: '#roadmap' },
+    { label: 'Get Started', href: '#get-started' },
   ]
 
   const socialLinks = [
