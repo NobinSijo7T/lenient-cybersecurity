@@ -73,7 +73,7 @@ const BackgroundLayer = ({
   const scale = useTransform(
     progress,
     [fadeInStart, fadeInEnd, fadeOutEnd],
-    [1.05, 1, 1.02]
+    [0.9, 0.86, 0.88]
   );
   const y = useTransform(
     progress,

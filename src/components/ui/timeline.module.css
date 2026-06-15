@@ -21,7 +21,7 @@
 
 .backgroundCamera {
   position: absolute;
-  inset: -5%;
+  inset: 6%;
   transform-style: preserve-3d;
 }
 
@@ -29,7 +29,8 @@
   position: absolute;
   inset: 0;
   background-position: center;
-  background-size: cover;
+  background-repeat: no-repeat;
+  background-size: contain;
   transform-origin: center;
   transform-style: preserve-3d;
   will-change: transform, opacity, filter;
@@ -251,7 +252,7 @@
   }
 
   .backgroundCamera {
-    inset: -2%;
+    inset: 8%;
   }
 
   .glassOverlay {
