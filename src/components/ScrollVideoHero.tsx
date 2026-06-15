@@ -13,9 +13,10 @@ interface ScrollVideoHeroProps {
   /** Extra className applied to the root element (e.g. page-level hero styles) */
   className?: string
   children?: React.ReactNode
+  id?: string
 }
 
-const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroProps) => {
+const ScrollVideoHero = ({ src, poster, className, children, id }: ScrollVideoHeroProps) => {
   const spacerRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -175,6 +176,7 @@ const ScrollVideoHero = ({ src, poster, className, children }: ScrollVideoHeroPr
         className={[styles.heroSection, className].filter(Boolean).join(' ')}
         role="region"
         aria-labelledby="hero-title"
+        id={id}
       >
         {/* Scroll-scrubbed background video */}
         <video
