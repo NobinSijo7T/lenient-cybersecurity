@@ -7,12 +7,12 @@ import Lenis from 'lenis'
 import { useScroll, useTransform } from 'motion/react'
 import { GoogleGeminiEffect } from '@/components/ui/google-gemini-effect'
 import { Timeline, type TimelineEntry } from '@/components/ui/timeline'
+import { CursorDrivenParticleTypography } from '@/components/ui/cursor-driven-particle-typography'
 import Navigation from '@/components/Navigation'
 import ScrollVideoHero from '@/components/ScrollVideoHero'
 import PageLoader from '@/components/PageLoader'
 import CTAButton from '@/components/CTAButton'
 import Footer from '@/components/Footer'
-import CustomCursor from '@/components/CustomCursor'
 import styles from './page.module.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -112,9 +112,7 @@ const learningPath: TimelineEntry[] = [
 
 export default function HomePage() {
   const heroContentRef = useRef<HTMLElement>(null)
-  const heroKickerRef = useRef<HTMLParagraphElement>(null)
   const heroTitleRef = useRef<HTMLHeadingElement>(null)
-  const heroCopyRef = useRef<HTMLDivElement>(null)
   const nextSectionRef = useRef<HTMLElement>(null)
   const geminiContainerRef = useRef<HTMLDivElement>(null)
 
@@ -162,8 +160,8 @@ export default function HomePage() {
           0.3
         )
         .from(
-          [heroKickerRef.current, heroTitleRef.current, heroCopyRef.current],
-          { opacity: 0, y: 34, duration: 0.8, stagger: 0.14 },
+          heroTitleRef.current,
+          { opacity: 0, y: 34, duration: 0.8 },
           '-=0.55'
         )
     }, heroContentRef)
@@ -210,19 +208,31 @@ export default function HomePage() {
 
         {/* Hero text content */}
         <section ref={heroContentRef} className={styles.heroContent}>
-          <p ref={heroKickerRef} className={styles.heroKicker}>
-            Hands-on cyber training
-          </p>
-          <h1 id="hero-title" ref={heroTitleRef} className={styles.heroTitle}>
-            <span>Learn</span>
-            <span>Cybersecurity</span>
-            <span className={styles.heroTitleAccent}>the Practical Way</span>
-          </h1>
-          <div ref={heroCopyRef} className={styles.heroCopyCard}>
-            <p className={styles.heroCopy}>
-              Master ethical hacking, network security, and Python scripting
-              through real-world training and projects.
-            </p>
+          <div id="hero-title" ref={heroTitleRef} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div style={{ height: '180px', width: '100%', maxWidth: '1000px' }}>
+              <CursorDrivenParticleTypography 
+                text="Learn Cybersecurity"
+                fontSize={85}
+                particleSize={2}
+                particleDensity={2}
+                dispersionStrength={15}
+                returnSpeed={0.08}
+                color="#fff7f2"
+                className="w-full"
+              />
+            </div>
+            <div style={{ height: '180px', width: '100%', maxWidth: '1000px' }}>
+              <CursorDrivenParticleTypography 
+                text="the Practical Way"
+                fontSize={85}
+                particleSize={2}
+                particleDensity={2}
+                dispersionStrength={15}
+                returnSpeed={0.08}
+                color="#ff321e"
+                className="w-full"
+              />
+            </div>
           </div>
         </section>
 
@@ -274,9 +284,6 @@ export default function HomePage() {
 
       {/* Footer */}
       <Footer />
-
-      {/* Custom Cursor */}
-      <CustomCursor />
     </div>
   )
 }

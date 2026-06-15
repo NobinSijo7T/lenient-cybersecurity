@@ -130,6 +130,7 @@
 .sectionInner {
   width: min(100%, 82rem);
   margin: 0 auto;
+  will-change: transform, opacity, filter;
 }
 
 .sectionMeta {
@@ -284,5 +285,9 @@
 
   .ambientGlow {
     animation: none;
+  }
+
+  .sectionInner {
+    will-change: auto;
   }
 }

@@ -3,7 +3,9 @@
 import {
   motion,
   useMotionTemplate,
+  useReducedMotion,
   useScroll,
+  useSpring,
   useTransform,
 } from "motion/react";
 import type { MotionValue } from "motion/react";
@@ -30,6 +32,15 @@ interface BackgroundLayerProps {
   index: number;
   count: number;
   progress: MotionValue<number>;
+}
+
+interface TimelineSectionProps {
+  item: TimelineEntry;
+  index: number;
+  count: number;
+  eyebrow: string;
+  title: string;
+  description: string;
 }
 
 const defaultImages = ["/1.png", "/2.png", "/3.png", "/4.png"];
@@ -127,6 +138,75 @@ const BackgroundLayer = ({
   );
 };
 
+const TimelineSection = ({
+  item,
+  index,
+  count,
+  eyebrow,
+  title,
+  description,
+}: TimelineSectionProps) => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 140,
+    damping: 28,
+    mass: 0.35,
+  });
+  const opacity = useTransform(
+    smoothProgress,
+    [0, 0.2, 0.78, 1],
+    [0, 1, 1, 0]
+  );
+  const y = useTransform(
+    smoothProgress,
+    [0, 0.24, 0.76, 1],
+    [72, 0, 0, -72]
+  );
+  const blur = useTransform(
+    smoothProgress,
+    [0, 0.2, 0.8, 1],
+    [8, 0, 0, 8]
+  );
+  const filter = useMotionTemplate`blur(${blur}px)`;
+
+  return (
+    <section ref={sectionRef} className={styles.section}>
+      <motion.div
+        className={styles.sectionInner}
+        style={shouldReduceMotion ? undefined : { opacity, y, filter }}
+      >
+        <div className={styles.sectionMeta}>
+          <span className={styles.sectionNumber}>
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          <span className={styles.sectionRule} />
+          <span className={styles.sectionCount}>
+            {String(count).padStart(2, "0")}
+          </span>
+        </div>
+
+        {index === 0 && (
+          <header className={styles.intro}>
+            <p className={styles.eyebrow}>{eyebrow}</p>
+            <h2 className={styles.heading}>{title}</h2>
+            <p className={styles.description}>{description}</p>
+          </header>
+        )}
+
+        <div className={styles.story}>
+          <h3 className={styles.storyTitle}>{item.title}</h3>
+          <div className={styles.storyContent}>{item.content}</div>
+        </div>
+      </motion.div>
+    </section>
+  );
+};
+
 export const Timeline = ({
   data,
   eyebrow = "Learning path",
@@ -175,38 +255,15 @@ export const Timeline = ({
 
       <div className={styles.contentLayer}>
         {data.map((item, index) => (
-          <section className={styles.section} key={item.title}>
-            <div className={styles.sectionInner}>
-              <div className={styles.sectionMeta}>
-                <span className={styles.sectionNumber}>
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span className={styles.sectionRule} />
-                <span className={styles.sectionCount}>
-                  {String(data.length).padStart(2, "0")}
-                </span>
-              </div>
-
-              {index === 0 && (
-                <header className={styles.intro}>
-                  <p className={styles.eyebrow}>{eyebrow}</p>
-                  <h2 className={styles.heading}>{title}</h2>
-                  <p className={styles.description}>{description}</p>
-                </header>
-              )}
-
-              <motion.div
-                className={styles.story}
-                initial={{ opacity: 0, y: 34 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ amount: 0.35 }}
-                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <h3 className={styles.storyTitle}>{item.title}</h3>
-                <div className={styles.storyContent}>{item.content}</div>
-              </motion.div>
-            </div>
-          </section>
+          <TimelineSection
+            key={item.title}
+            item={item}
+            index={index}
+            count={data.length}
+            eyebrow={eyebrow}
+            title={title}
+            description={description}
+          />
         ))}
       </div>
     </div>
