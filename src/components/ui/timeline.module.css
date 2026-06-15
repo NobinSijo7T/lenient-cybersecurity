@@ -20,22 +20,78 @@
   transform-style: preserve-3d;
 }
 
+/* Full screen matrix rain behind everything */
+.backgroundMatrixRain {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
 .backgroundCamera {
   position: absolute;
   inset: 6%;
   transform-style: preserve-3d;
+  z-index: 2;
 }
 
 .backgroundLayer {
   position: absolute;
   inset: 0;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
   transform-origin: center;
   transform-style: preserve-3d;
   will-change: transform, opacity, filter;
   backface-visibility: hidden;
+  overflow: hidden;
+}
+
+/* Matrix rain sits at the very back of each layer */
+.matrixRainLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0.8;
+}
+
+.matrixRainCanvas {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  opacity: 1 !important;
+}
+
+/* Actual background image on top of the matrix rain */
+.bgImageLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 1;
+  mix-blend-mode: normal;
+}
+
+/* Ambient animations target the bgImageLayer inside each anim wrapper */
+.bgAnimDrift .bgImageLayer {
+  animation: bgKenBurnsDrift 18s ease-in-out infinite alternate;
+}
+
+.bgAnimOrbit .bgImageLayer {
+  animation: bgFloatOrbit 22s ease-in-out infinite;
+}
+
+.bgAnimSway .bgImageLayer {
+  animation: bgParallaxSway 16s ease-in-out infinite alternate;
+}
+
+.bgAnimEthereal .bgImageLayer {
+  animation: bgEtherealSpin 26s linear infinite;
 }
 
 .backgroundLayer::before {
@@ -48,6 +104,202 @@
   animation: levelUpFlash 0.3s ease-out;
   animation-play-state: paused;
   animation-delay: calc(var(--layer-index, 0) * 1s);
+}
+
+/* ── Hacker-themed edge overlays (per-layer ::after, above bgImageLayer) ── */
+
+.bgAnimDrift::after,
+.bgAnimOrbit::after,
+.bgAnimSway::after,
+.bgAnimEthereal::after {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  z-index: 2;
+  mask-image: radial-gradient(ellipse 42% 40% at center, transparent 55%, black 80%);
+  -webkit-mask-image: radial-gradient(ellipse 42% 40% at center, transparent 55%, black 80%);
+}
+
+/* Layer 1 – Matrix code rain */
+.bgAnimDrift::after {
+  background:
+    repeating-linear-gradient(
+      180deg,
+      transparent 0px,
+      rgba(0, 255, 65, 0.04) 2px,
+      transparent 4px,
+      transparent 18px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      rgba(0, 255, 65, 0.025) 1px,
+      transparent 2px,
+      transparent 24px
+    );
+  background-size: 24px 72px, 24px 100%;
+  animation: hackerMatrixRain 2.8s linear infinite;
+  opacity: 0.85;
+}
+
+/* Layer 2 – Radar sweep with concentric rings */
+.bgAnimOrbit::after {
+  background:
+    conic-gradient(
+      from 0deg at 50% 50%,
+      transparent 0deg,
+      rgba(0, 255, 180, 0.08) 20deg,
+      rgba(0, 255, 120, 0.04) 40deg,
+      transparent 60deg
+    ),
+    repeating-radial-gradient(
+      circle at 50% 50%,
+      transparent 0px,
+      transparent 44px,
+      rgba(0, 255, 160, 0.05) 45px,
+      transparent 47px
+    ),
+    repeating-radial-gradient(
+      circle at 50% 50%,
+      transparent 0px,
+      transparent 88px,
+      rgba(0, 255, 160, 0.03) 89px,
+      transparent 91px
+    );
+  animation: hackerRadarSweep 6s linear infinite;
+  opacity: 0.9;
+}
+
+/* Layer 3 – Circuit board traces with glowing nodes */
+.bgAnimSway::after {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 80, 60, 0.04) 0 1px,
+      transparent 1px 36px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 80, 60, 0.04) 0 1px,
+      transparent 1px 36px
+    ),
+    radial-gradient(circle 1.5px at 18px 18px, rgba(0, 255, 200, 0.2) 0, transparent 3px);
+  background-size: 36px 36px;
+  animation: hackerCircuitPulse 5s ease-in-out infinite;
+  opacity: 0.8;
+}
+
+/* Layer 4 – Horizontal data stream / binary flow */
+.bgAnimEthereal::after {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      rgba(0, 200, 255, 0.05) 3px,
+      transparent 6px,
+      transparent 14px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      rgba(0, 200, 255, 0.03) 1px,
+      transparent 2px,
+      transparent 28px
+    );
+  background-size: 100% 28px, 14px 28px;
+  animation: hackerDataStream 3.2s linear infinite;
+  opacity: 0.85;
+}
+
+/* ── Global hacker overlays ── */
+
+.hackerScanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 255, 65, 0.012) 2px,
+    rgba(0, 255, 65, 0.012) 4px
+  );
+  mix-blend-mode: screen;
+}
+
+.hackerBeam {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 47%,
+    rgba(0, 255, 120, 0.06) 49%,
+    rgba(0, 255, 120, 0.1) 50%,
+    rgba(0, 255, 120, 0.06) 51%,
+    transparent 53%,
+    transparent 100%
+  );
+  background-size: 100% 200%;
+  animation: hackerBeamSweep 5s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+.hackerCorners {
+  position: absolute;
+  inset: 4% 3%;
+  z-index: 7;
+  pointer-events: none;
+  border: 1px solid rgba(0, 255, 120, 0.08);
+  mask-image:
+    linear-gradient(to right, black 48px, transparent 48px, transparent calc(100% - 48px), black calc(100% - 48px)),
+    linear-gradient(to bottom, black 48px, transparent 48px, transparent calc(100% - 48px), black calc(100% - 48px));
+  -webkit-mask-image:
+    linear-gradient(to right, black 48px, transparent 48px, transparent calc(100% - 48px), black calc(100% - 48px)),
+    linear-gradient(to bottom, black 48px, transparent 48px, transparent calc(100% - 48px), black calc(100% - 48px));
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+  animation: hackerCornerPulse 4s ease-in-out infinite;
+}
+
+.hackerCorners::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  border: 1px solid rgba(0, 255, 120, 0.04);
+  mask-image: inherit;
+  -webkit-mask-image: inherit;
+  mask-composite: inherit;
+  -webkit-mask-composite: inherit;
+  filter: blur(4px);
+}
+
+.hackerGrid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 255, 100, 0.02) 0 1px,
+      transparent 1px 80px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 255, 100, 0.02) 0 1px,
+      transparent 1px 80px
+    );
+  mask-image: radial-gradient(ellipse 65% 60% at center, transparent 25%, black 70%);
+  -webkit-mask-image: radial-gradient(ellipse 65% 60% at center, transparent 25%, black 70%);
+  animation: hackerGridFlicker 6s steps(1) infinite;
 }
 
 @keyframes levelUpFlash {
@@ -444,6 +696,218 @@
   }
 }
 
+/* ── Hacker edge effect keyframes ── */
+
+@keyframes hackerMatrixRain {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 0 72px, 0 0;
+  }
+}
+
+@keyframes hackerRadarSweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hackerCircuitPulse {
+  0%, 100% {
+    opacity: 0.5;
+    background-position: 0 0, 0 0, 0 0;
+  }
+  25% {
+    opacity: 0.9;
+    background-position: 0 0, 0 0, 4px 4px;
+  }
+  50% {
+    opacity: 0.6;
+    background-position: 0 0, 0 0, 8px 8px;
+  }
+  75% {
+    opacity: 1;
+    background-position: 0 0, 0 0, 12px 12px;
+  }
+}
+
+@keyframes hackerDataStream {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: -56px 0, 0 0;
+  }
+}
+
+@keyframes hackerBeamSweep {
+  0% {
+    background-position: 0 -100%;
+  }
+  50% {
+    background-position: 0 200%;
+  }
+  50.01% {
+    background-position: 0 -100%;
+    opacity: 0;
+  }
+  60% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.7;
+    background-position: 0 -100%;
+  }
+}
+
+@keyframes hackerCornerPulse {
+  0%, 100% {
+    opacity: 0.5;
+    border-color: rgba(0, 255, 120, 0.06);
+  }
+  50% {
+    opacity: 1;
+    border-color: rgba(0, 255, 120, 0.14);
+  }
+}
+
+@keyframes hackerGridFlicker {
+  0%, 9%, 11%, 29%, 31%, 69%, 71%, 100% {
+    opacity: 0.6;
+  }
+  10%, 30%, 70% {
+    opacity: 0.2;
+  }
+}
+
+/* ── Background Layer 1: Ken Burns drift ── */
+@keyframes bgKenBurnsDrift {
+  0% {
+    background-position: 48% 52%;
+    background-size: contain;
+  }
+  25% {
+    background-position: 53% 48%;
+    background-size: 108%;
+  }
+  50% {
+    background-position: 46% 54%;
+    background-size: 104%;
+  }
+  75% {
+    background-position: 55% 46%;
+    background-size: 110%;
+  }
+  100% {
+    background-position: 50% 50%;
+    background-size: 106%;
+  }
+}
+
+/* ── Background Layer 2: Floating orbit ── */
+@keyframes bgFloatOrbit {
+  0% {
+    background-position: 50% 50%;
+    background-size: contain;
+  }
+  12.5% {
+    background-position: 54% 46%;
+    background-size: 106%;
+  }
+  25% {
+    background-position: 56% 50%;
+    background-size: 108%;
+  }
+  37.5% {
+    background-position: 54% 54%;
+    background-size: 106%;
+  }
+  50% {
+    background-position: 50% 56%;
+    background-size: 104%;
+  }
+  62.5% {
+    background-position: 46% 54%;
+    background-size: 106%;
+  }
+  75% {
+    background-position: 44% 50%;
+    background-size: 108%;
+  }
+  87.5% {
+    background-position: 46% 46%;
+    background-size: 106%;
+  }
+  100% {
+    background-position: 50% 50%;
+    background-size: contain;
+  }
+}
+
+/* ── Background Layer 3: Parallax sway ── */
+@keyframes bgParallaxSway {
+  0% {
+    background-position: 50% 50%;
+    background-size: contain;
+  }
+  20% {
+    background-position: 44% 48%;
+    background-size: 107%;
+  }
+  40% {
+    background-position: 52% 44%;
+    background-size: 103%;
+  }
+  60% {
+    background-position: 56% 52%;
+    background-size: 109%;
+  }
+  80% {
+    background-position: 48% 56%;
+    background-size: 105%;
+  }
+  100% {
+    background-position: 50% 50%;
+    background-size: 106%;
+  }
+}
+
+/* ── Background Layer 4: Ethereal slow spin drift ── */
+@keyframes bgEtherealSpin {
+  0% {
+    background-position: 50% 50%;
+    background-size: contain;
+  }
+  16.6% {
+    background-position: 55% 44%;
+    background-size: 112%;
+  }
+  33.3% {
+    background-position: 52% 56%;
+    background-size: 105%;
+  }
+  50% {
+    background-position: 44% 52%;
+    background-size: 110%;
+  }
+  66.6% {
+    background-position: 48% 44%;
+    background-size: 103%;
+  }
+  83.3% {
+    background-position: 56% 50%;
+    background-size: 108%;
+  }
+  100% {
+    background-position: 50% 50%;
+    background-size: contain;
+  }
+}
+
 @keyframes fiberCurrent {
   0% {
     background-position: 0 0, center;
@@ -522,6 +986,19 @@
 
   .backgroundLayer {
     filter: none !important;
+    animation: none !important;
+  }
+
+  .bgImageLayer {
+    animation: none !important;
+  }
+
+  .matrixRainLayer {
+    display: none;
+  }
+
+  .backgroundLayer::after {
+    display: none;
   }
 
   .backgroundCamera {
@@ -534,6 +1011,16 @@
 
   .ambientGlow {
     animation: none;
+  }
+
+  .hackerBeam,
+  .hackerScanlines,
+  .hackerGrid {
+    display: none;
+  }
+
+  .hackerCorners {
+    display: none;
   }
 
   .section {
@@ -553,10 +1040,31 @@
 @media (prefers-reduced-motion: reduce) {
   .backgroundLayer {
     filter: none !important;
+    animation: none !important;
+  }
+
+  .bgImageLayer {
+    animation: none !important;
+  }
+
+  .matrixRainLayer {
+    display: none;
+  }
+
+  .backgroundLayer::after {
+    display: none;
   }
 
   .ambientGlow {
     animation: none;
+  }
+
+  .hackerBeam,
+  .hackerScanlines,
+  .hackerGrid,
+  .hackerCorners {
+    animation: none;
+    display: none;
   }
 
   .sectionInner {

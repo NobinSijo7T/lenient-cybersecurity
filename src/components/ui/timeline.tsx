@@ -10,6 +10,7 @@ import {
 } from "motion/react";
 import type { MotionValue } from "motion/react";
 import React, { useRef } from "react";
+import { MatrixRain } from "./matrix-rain";
 import styles from "./timeline.module.css";
 
 export interface TimelineEntry {
@@ -293,6 +294,13 @@ const levelMotionPresets = [
   },
 ] as const;
 
+const bgAnimClasses = [
+  styles.bgAnimDrift,
+  styles.bgAnimOrbit,
+  styles.bgAnimSway,
+  styles.bgAnimEthereal,
+] as const;
+
 const BackgroundLayer = ({
   image,
   index,
@@ -368,9 +376,11 @@ const BackgroundLayer = ({
   );
   const filter = useMotionTemplate`blur(${blur}px) brightness(${brightness})`;
 
+  const animClass = bgAnimClasses[index % bgAnimClasses.length];
+
   return (
     <motion.div
-      className={styles.backgroundLayer}
+      className={`${styles.backgroundLayer} ${animClass}`}
       style={{
         opacity,
         scale,
@@ -379,10 +389,25 @@ const BackgroundLayer = ({
         rotateY,
         z,
         filter,
-        backgroundImage: `url(${image})`,
       }}
       aria-hidden="true"
-    />
+    >
+      {/* Red matrix rain fills the full layer behind the image */}
+      <div className={styles.matrixRainLayer}>
+        <MatrixRain
+          overlay
+          fixedColor="rgba(255, 60, 40, 0.9)"
+          fontSize={16}
+          speed={40}
+          className={styles.matrixRainCanvas}
+        />
+      </div>
+      {/* The actual background image sits on top */}
+      <div
+        className={styles.bgImageLayer}
+        style={{ backgroundImage: `url(${image})` }}
+      />
+    </motion.div>
   );
 };
 
@@ -430,37 +455,37 @@ const TimelineSection = ({
     titleRange,
     [0, 0.85, 1, 1, 0]
   );
-  const titleX = useTransform(smoothProgress, titleRange, motionPreset.titleX);
-  const titleY = useTransform(smoothProgress, titleRange, motionPreset.titleY);
+  const titleX = useTransform(smoothProgress, titleRange, [...motionPreset.titleX]);
+  const titleY = useTransform(smoothProgress, titleRange, [...motionPreset.titleY]);
   const titleScale = useTransform(
     smoothProgress,
     titleRange,
-    motionPreset.titleScale
+    [...motionPreset.titleScale]
   );
   const titleRotateX = useTransform(
     smoothProgress,
     titleRange,
-    motionPreset.titleRotateX
+    [...motionPreset.titleRotateX]
   );
   const titleRotateZ = useTransform(
     smoothProgress,
     titleRange,
-    motionPreset.titleRotateZ
+    [...motionPreset.titleRotateZ]
   );
   const titleSkewX = useTransform(
     smoothProgress,
     titleRange,
-    motionPreset.titleSkewX
+    [...motionPreset.titleSkewX]
   );
   const titleScaleX = useTransform(
     smoothProgress,
     titleRange,
-    motionPreset.titleScaleX
+    [...motionPreset.titleScaleX]
   );
   const titleLetterSpacing = useTransform(
     smoothProgress,
     titleRange,
-    motionPreset.titleLetterSpacing
+    [...motionPreset.titleLetterSpacing]
   );
   const titleBlur = useTransform(
     smoothProgress,
@@ -475,27 +500,27 @@ const TimelineSection = ({
   const titleGlowRadius = useTransform(titleGlow, [0, 1], [0, 24]);
   const titleFilter = useMotionTemplate`blur(${titleBlur}px) drop-shadow(0 0 ${titleGlowRadius}px rgb(255 70 48 / 0.55))`;
 
-  const contentX = useTransform(smoothProgress, cardRange, motionPreset.cardX);
-  const contentY = useTransform(smoothProgress, cardRange, motionPreset.cardY);
+  const contentX = useTransform(smoothProgress, cardRange, [...motionPreset.cardX]);
+  const contentY = useTransform(smoothProgress, cardRange, [...motionPreset.cardY]);
   const contentScale = useTransform(
     smoothProgress,
     cardRange,
-    motionPreset.cardScale
+    [...motionPreset.cardScale]
   );
   const contentRotateX = useTransform(
     smoothProgress,
     cardRange,
-    motionPreset.cardRotateX
+    [...motionPreset.cardRotateX]
   );
   const contentRotateY = useTransform(
     smoothProgress,
     cardRange,
-    motionPreset.cardRotateY
+    [...motionPreset.cardRotateY]
   );
   const contentRotateZ = useTransform(
     smoothProgress,
     cardRange,
-    motionPreset.cardRotateZ
+    [...motionPreset.cardRotateZ]
   );
   const contentBlur = useTransform(
     smoothProgress,
@@ -678,6 +703,16 @@ export const Timeline = ({
   return (
     <div ref={containerRef} className={styles.timeline}>
       <div className={styles.stickyBackground} aria-hidden="true">
+        {/* Full screen matrix rain in the background */}
+        <div className={styles.backgroundMatrixRain}>
+          <MatrixRain
+            overlay
+            fixedColor="rgba(255, 60, 40, 0.85)"
+            fontSize={18}
+            speed={35}
+            className="w-full h-full"
+          />
+        </div>
         <div className={styles.backgroundCamera}>
           {resolvedImages.map((image, index) => (
             <BackgroundLayer
@@ -694,6 +729,11 @@ export const Timeline = ({
         <div className={styles.gradientOverlay} />
         <div className={styles.vignette} />
         <div className={styles.noise} />
+        {/* Hacker-themed edge overlays */}
+        <div className={styles.hackerScanlines} />
+        <div className={styles.hackerBeam} />
+        <div className={styles.hackerCorners} />
+        <div className={styles.hackerGrid} />
       </div>
 
       <div className={styles.progressTrack} aria-hidden="true">
