@@ -27,6 +27,41 @@ interface TypewriterTextProps {
   endProgress?: number;
 }
 
+interface TypewriterCharProps {
+  char: string;
+  index: number;
+  total: number;
+  progress: MotionValue<number>;
+  startProgress: number;
+  endProgress: number;
+}
+
+const TypewriterChar = ({
+  char,
+  index,
+  total,
+  progress,
+  startProgress,
+  endProgress,
+}: TypewriterCharProps) => {
+  const charProgress = index / Math.max(1, total);
+  const charStart = startProgress + charProgress * (endProgress - startProgress);
+  const charEnd = charStart + 0.05;
+  const opacity = useTransform(progress, [charStart, charEnd], [0, 1]);
+  const y = useTransform(progress, [charStart, charEnd], [20, 0]);
+  const blur = useTransform(progress, [charStart, charEnd], [4, 0]);
+  const filter = useMotionTemplate`blur(${blur}px)`;
+
+  return (
+    <motion.span
+      className={styles.typewriterChar}
+      style={{ opacity, y, filter }}
+    >
+      {char}
+    </motion.span>
+  );
+};
+
 const TypewriterText = ({ 
   text, 
   progress, 
@@ -34,36 +69,105 @@ const TypewriterText = ({
   startProgress = 0.16,
   endProgress = 0.4
 }: TypewriterTextProps) => {
-  const chars = text.split('');
-  const totalChars = chars.length;
+  const words = text.split(" ");
+  const totalChars = text.replace(/\s/g, "").length;
+  let charIndex = 0;
 
   return (
-    <div className={className} style={{ display: 'inline' }}>
-      {chars.map((char, index) => {
-        const charProgress = index / totalChars;
-        const charStart = startProgress + (charProgress * (endProgress - startProgress));
-        const charEnd = charStart + 0.05;
-        
-        const opacity = useTransform(
-          progress,
-          [charStart, charEnd],
-          [0, 1]
-        );
-        
-        const y = useTransform(
-          progress,
-          [charStart, charEnd],
-          [20, 0]
-        );
-        
-        const blur = useTransform(
-          progress,
-          [charStart, charEnd],
-          [4, 0]
-        );
-        
-        const filter = useMotionTemplate`blur(${blur}px)`;
+    <div className={[className, styles.typewriterText].filter(Boolean).join(" ")}>
+      {words.map((word, wordIndex) => (
+        <span className={styles.typewriterWord} key={`${word}-${wordIndex}`}>
+          {word.split("").map((char) => {
+            const currentIndex = charIndex;
+            charIndex += 1;
 
+            return (
+              <TypewriterChar
+                key={`${char}-${wordIndex}-${currentIndex}`}
+                char={char}
+                index={currentIndex}
+                total={totalChars}
+                progress={progress}
+                startProgress={startProgress}
+                endProgress={endProgress}
+              />
+            );
+          })}
+        </span>
+      ))}
+    </div>
+  );
+};
+
+const AnimatedWord = ({
+  word,
+  index,
+  count,
+  progress,
+}: {
+  word: string;
+  index: number;
+  count: number;
+  progress: MotionValue<number>;
+}) => {
+  const stagger = Math.min(0.025, 0.12 / count);
+  const enterStart = 0.08 + index * stagger;
+  const enterEnd = enterStart + 0.16;
+  const exitStart = 0.76 + index * stagger;
+  const exitEnd = Math.min(0.98, exitStart + 0.14);
+  const opacity = useTransform(
+    progress,
+    [enterStart, enterEnd, exitStart, exitEnd],
+    [0, 1, 1, 0]
+  );
+  const y = useTransform(
+    progress,
+    [enterStart, enterEnd, exitStart, exitEnd],
+    [64, 0, 0, -64]
+  );
+  const rotateX = useTransform(
+    progress,
+    [enterStart, enterEnd, exitStart, exitEnd],
+    [70, 0, 0, -70]
+  );
+  const blur = useTransform(
+    progress,
+    [enterStart, enterEnd, exitStart, exitEnd],
+    [10, 0, 0, 10]
+  );
+  const filter = useMotionTemplate`blur(${blur}px)`;
+
+  return (
+    <span className={styles.wordClip}>
+      <motion.span
+        className={styles.animatedWord}
+        style={{ opacity, y, rotateX, filter }}
+      >
+        {word}
+      </motion.span>
+    </span>
+  );
+};
+
+const AnimatedWords = ({ text, progress, className }: AnimatedWordsProps) => {
+  const words = text.split(" ");
+
+  return (
+    <div className={className} aria-label={text}>
+      {words.map((word, index) => (
+        <AnimatedWord
+          key={`${word}-${index}`}
+          word={word}
+          index={index}
+          count={words.length}
+          progress={progress}
+        />
+      ))}
+    </div>
+  );
+};
+
+/*
         return (
           <motion.span
             key={`${char}-${index}`}
@@ -82,6 +186,7 @@ const TypewriterText = ({
     </div>
   );
 };
+*/
 
 interface TimelineProps {
   data: TimelineEntry[];
@@ -278,74 +383,6 @@ const BackgroundLayer = ({
       }}
       aria-hidden="true"
     />
-  );
-};
-
-const AnimatedWord = ({
-  word,
-  index,
-  count,
-  progress,
-}: {
-  word: string;
-  index: number;
-  count: number;
-  progress: MotionValue<number>;
-}) => {
-  const stagger = Math.min(0.025, 0.12 / count);
-  const enterStart = 0.08 + index * stagger;
-  const enterEnd = enterStart + 0.16;
-  const exitStart = 0.76 + index * stagger;
-  const exitEnd = Math.min(0.98, exitStart + 0.14);
-  const opacity = useTransform(
-    progress,
-    [enterStart, enterEnd, exitStart, exitEnd],
-    [0, 1, 1, 0]
-  );
-  const y = useTransform(
-    progress,
-    [enterStart, enterEnd, exitStart, exitEnd],
-    [64, 0, 0, -64]
-  );
-  const rotateX = useTransform(
-    progress,
-    [enterStart, enterEnd, exitStart, exitEnd],
-    [70, 0, 0, -70]
-  );
-  const blur = useTransform(
-    progress,
-    [enterStart, enterEnd, exitStart, exitEnd],
-    [10, 0, 0, 10]
-  );
-  const filter = useMotionTemplate`blur(${blur}px)`;
-
-  return (
-    <span className={styles.wordClip}>
-      <motion.span
-        className={styles.animatedWord}
-        style={{ opacity, y, rotateX, filter }}
-      >
-        {word}
-      </motion.span>
-    </span>
-  );
-};
-
-const AnimatedWords = ({ text, progress, className }: AnimatedWordsProps) => {
-  const words = text.split(" ");
-
-  return (
-    <div className={className} aria-label={text}>
-      {words.map((word, index) => (
-        <AnimatedWord
-          key={`${word}-${index}`}
-          word={word}
-          index={index}
-          count={words.length}
-          progress={progress}
-        />
-      ))}
-    </div>
   );
 };
 
