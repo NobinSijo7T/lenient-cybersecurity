@@ -169,6 +169,44 @@ const ScrollVideoHero = ({ src, poster, className, children, id }: ScrollVideoHe
     }
   }, [])
 
+  useLayoutEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches
+
+    const setPointer = (x: number, y: number) => {
+      section.style.setProperty('--hero-pointer-x', `${x * 100}%`)
+      section.style.setProperty('--hero-pointer-y', `${y * 100}%`)
+      section.style.setProperty('--hero-parallax-x', `${(x - 0.5) * 34}px`)
+      section.style.setProperty('--hero-parallax-y', `${(y - 0.5) * 26}px`)
+    }
+
+    setPointer(0.5, 0.5)
+
+    if (prefersReducedMotion) return
+
+    const onPointerMove = (event: PointerEvent) => {
+      const rect = section.getBoundingClientRect()
+      const x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width))
+      const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height))
+
+      setPointer(x, y)
+    }
+
+    const onPointerLeave = () => setPointer(0.5, 0.5)
+
+    section.addEventListener('pointermove', onPointerMove, { passive: true })
+    section.addEventListener('pointerleave', onPointerLeave)
+
+    return () => {
+      section.removeEventListener('pointermove', onPointerMove)
+      section.removeEventListener('pointerleave', onPointerLeave)
+    }
+  }, [])
+
   return (
     <div ref={spacerRef} className={styles.heroPinSpacer}>
       <div

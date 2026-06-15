@@ -19,7 +19,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const learningPath: TimelineEntry[] = [
   {
-    title: 'Level 1: Foundations',
+    title: 'Day 1: Foundations',
     content: (
       <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
         <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">
@@ -40,7 +40,7 @@ const learningPath: TimelineEntry[] = [
     ),
   },
   {
-    title: 'Level 2: Break Things',
+    title: 'Day 2: Break Things',
     content: (
       <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
         <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">
@@ -63,7 +63,7 @@ const learningPath: TimelineEntry[] = [
     ),
   },
   {
-    title: 'Level 3: Build Defenses',
+    title: 'Day 3: Build Defenses',
     content: (
       <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
         <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">
@@ -86,7 +86,7 @@ const learningPath: TimelineEntry[] = [
     ),
   },
   {
-    title: 'Level 4: Ship Proof',
+    title: 'Day 4: Ship Proof',
     content: (
       <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
         <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">
@@ -200,6 +200,12 @@ export default function HomePage() {
       <ScrollVideoHero src="/bg_vid.mp4" className={styles.hero} id="home">
 
         {/* Atmospheric overlays */}
+        <div className={styles.heroInteractiveField} aria-hidden="true">
+          <span />
+          <span />
+          <span />
+          <span />
+        </div>
         <div className={styles.heroFloatingOrbs} aria-hidden="true" />
         <div className={styles.heroDataStream} aria-hidden="true" />
         <div className={styles.heroGrid} aria-hidden="true" />
@@ -208,25 +214,25 @@ export default function HomePage() {
 
         {/* Hero text content */}
         <section ref={heroContentRef} className={styles.heroContent}>
-          <div id="hero-title" ref={heroTitleRef} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <div style={{ height: '180px', width: '100%', maxWidth: '1000px' }}>
+          <div id="hero-title" ref={heroTitleRef} style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ height: '220px', width: '100%', maxWidth: '1000px', paddingBottom: '3rem', overflow: 'visible' }}>
               <CursorDrivenParticleTypography 
-                text="Learn Cybersecurity"
+                text="Learn"
                 fontSize={85}
                 particleSize={2}
-                particleDensity={2}
+                particleDensity={3}
                 dispersionStrength={15}
                 returnSpeed={0.08}
                 color="#fff7f2"
                 className="w-full"
               />
             </div>
-            <div style={{ height: '180px', width: '100%', maxWidth: '1000px' }}>
+            <div style={{ height: '200px', width: '100%', maxWidth: '1000px', marginTop: '-4rem', overflow: 'visible' }}>
               <CursorDrivenParticleTypography 
-                text="the Practical Way"
+                text="Cybersecurity"
                 fontSize={85}
                 particleSize={2}
-                particleDensity={2}
+                particleDensity={3}
                 dispersionStrength={15}
                 returnSpeed={0.08}
                 color="#ff321e"
@@ -244,7 +250,8 @@ export default function HomePage() {
           data={learningPath}
           eyebrow="Your roadmap"
           title="From curious beginner to capable defender"
-          description="A practical path built around the skills, tools, and real-world challenges that move your cybersecurity career forward."
+          description="A practical path built around the skills, tools, and 
+          real-world challenges that move your cybersecurity career forward."
         />
       </div>
 
