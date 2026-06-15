@@ -4,19 +4,15 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { gsap } from 'gsap'
 import {
   Home,
-  ShieldCheck,
-  Network,
-  SquareTerminal,
-  FolderCode,
+  Route,
+  Rocket,
 } from 'lucide-react'
 import styles from './Navigation.module.css'
 
 const navItems = [
-  { icon: Home, label: 'Home' },
-  { icon: ShieldCheck, label: 'Ethical Hacking' },
-  { icon: Network, label: 'Network Security' },
-  { icon: SquareTerminal, label: 'Python Scripting' },
-  { icon: FolderCode, label: 'Projects' },
+  { icon: Home, label: 'Home', href: '#home' },
+  { icon: Route, label: 'Roadmap', href: '#roadmap' },
+  { icon: Rocket, label: 'Get Started', href: '#get-started' },
 ]
 
 export default function Navigation() {
@@ -73,6 +69,13 @@ export default function Navigation() {
         duration: 0.22,
         ease: 'power2.out',
       })
+    }
+  }
+
+  const handleNavClick = (href: string) => {
+    const target = document.querySelector(href)
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }
 
@@ -139,6 +142,7 @@ export default function Navigation() {
                 onMouseEnter={() => handleSetActive(index)}
                 onFocus={() => handleSetActive(index)}
                 onBlur={handleClearActive}
+                onClick={() => handleNavClick(item.href)}
               >
                 <IconComponent
                   className={styles.menuBarIcon}

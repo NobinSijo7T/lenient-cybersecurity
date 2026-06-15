@@ -9,11 +9,10 @@ import { GoogleGeminiEffect } from '@/components/ui/google-gemini-effect'
 import { Timeline, type TimelineEntry } from '@/components/ui/timeline'
 import Navigation from '@/components/Navigation'
 import ScrollVideoHero from '@/components/ScrollVideoHero'
-import CustomCursorCrosshair from '@/components/CustomCursorCrosshair'
-import ClickSpark from '@/components/ClickSpark'
 import PageLoader from '@/components/PageLoader'
 import CTAButton from '@/components/CTAButton'
 import Footer from '@/components/Footer'
+import CustomCursor from '@/components/CustomCursor'
 import styles from './page.module.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -200,7 +199,7 @@ export default function HomePage() {
       <Navigation />
 
       {/* ── Scroll-Scrubbed Cinematic Hero ───────────────── */}
-      <ScrollVideoHero src="/bg_vid.mp4" className={styles.hero}>
+      <ScrollVideoHero src="/bg_vid.mp4" className={styles.hero} id="home">
 
         {/* Atmospheric overlays */}
         <div className={styles.heroFloatingOrbs} aria-hidden="true" />
@@ -230,15 +229,18 @@ export default function HomePage() {
       </ScrollVideoHero>
 
       {/* Practical learning path */}
-      <Timeline
-        data={learningPath}
-        eyebrow="Your roadmap"
-        title="From curious beginner to capable defender"
-        description="A practical path built around the skills, tools, and real-world challenges that move your cybersecurity career forward."
-      />
+      <div id="roadmap">
+        <Timeline
+          data={learningPath}
+          eyebrow="Your roadmap"
+          title="From curious beginner to capable defender"
+          description="A practical path built around the skills, tools, and real-world challenges that move your cybersecurity career forward."
+        />
+      </div>
 
       {/* Next Section slides over hero */}
       <section
+        id="get-started"
         ref={nextSectionRef}
         className={`${styles.nextSection} ${styles.nextSectionOverlay}`}
       >
@@ -274,10 +276,7 @@ export default function HomePage() {
       <Footer />
 
       {/* Custom Cursor */}
-      <CustomCursorCrosshair />
-
-      {/* Click Spark Effect */}
-      <ClickSpark />
+      <CustomCursor />
     </div>
   )
 }

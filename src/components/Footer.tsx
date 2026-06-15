@@ -4,10 +4,9 @@ import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import {
-  Github,
+  Instagram,
   Twitter,
   Linkedin,
-  Mail,
   ArrowUpRight,
 } from 'lucide-react'
 import styles from './Footer.module.css'
@@ -47,10 +46,17 @@ export default function Footer() {
   ]
 
   const socialLinks = [
-    { icon: Github, label: 'GitHub', href: 'https://github.com' },
-    { icon: Twitter, label: 'Twitter', href: 'https://twitter.com' },
-    { icon: Linkedin, label: 'LinkedIn', href: 'https://linkedin.com' },
-    { icon: Mail, label: 'Email', href: 'mailto:info@lenientcyber.com' },
+    {
+      icon: Instagram,
+      label: 'Instagram',
+      href: 'https://www.instagram.com/lenient_tree?igsh=ZmV4ajVlNGhhNW52',
+    },
+    { icon: Twitter, label: 'X', href: 'https://x.com/lenienttree' },
+    {
+      icon: Linkedin,
+      label: 'LinkedIn',
+      href: 'https://www.linkedin.com/company/lenient-tree/',
+    },
   ]
 
   return (

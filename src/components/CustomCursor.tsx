@@ -1,143 +1,92 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { gsap } from 'gsap'
 import styles from './CustomCursor.module.css'
 
 export default function CustomCursor() {
   const cursorDotRef = useRef<HTMLDivElement>(null)
-  const cursorRingRef = useRef<HTMLDivElement>(null)
-  const [isTouch, setIsTouch] = useState(false)
-  const [isHovering, setIsHovering] = useState(false)
-
+  const cursorOutlineRef = useRef<HTMLDivElement>(null)
+  const [isPointer, setIsPointer] = useState(false)
+  
   useEffect(() => {
-    // Check if touch device
-    const touchDevice =
-      'ontouchstart' in window || navigator.maxTouchPoints > 0
-    setIsTouch(touchDevice)
-    if (touchDevice) return
+    const cursorDot = cursorDotRef.current
+    const cursorOutline = cursorOutlineRef.current
+    
+    if (!cursorDot || !cursorOutline) return
 
-    // Hide default cursor globally
+    // Add class to hide default cursor
     document.documentElement.classList.add('custom-cursor-active')
 
-    const mouse = { x: 0, y: 0 }
-    const dotPos = { x: 0, y: 0 }
-    const ringPos = { x: 0, y: 0 }
+    let mouseX = 0
+    let mouseY = 0
+    let outlineX = 0
+    let outlineY = 0
 
-    const onMouseMove = (e: MouseEvent) => {
-      mouse.x = e.clientX
-      mouse.y = e.clientY
+    // Update mouse position
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX
+      mouseY = e.clientY
+      
+      // Update dot position immediately
+      cursorDot.style.left = `${mouseX}px`
+      cursorDot.style.top = `${mouseY}px`
 
-      gsap.to(dotPos, {
-        x: mouse.x,
-        y: mouse.y,
-        duration: 0.06,
-        ease: 'power2.out',
-        onUpdate: () => {
-          if (cursorDotRef.current) {
-            cursorDotRef.current.style.transform = `translate3d(${dotPos.x}px, ${dotPos.y}px, 0) translate(-50%, -50%)`
-          }
-        },
-      })
-
-      gsap.to(ringPos, {
-        x: mouse.x,
-        y: mouse.y,
-        duration: 0.32,
-        ease: 'power3.out',
-        onUpdate: () => {
-          if (cursorRingRef.current) {
-            cursorRingRef.current.style.transform = `translate3d(${ringPos.x}px, ${ringPos.y}px, 0) translate(-50%, -50%)`
-          }
-        },
-      })
+      // Check if hovering over interactive elements
+      const target = e.target as HTMLElement
+      const isInteractive = target.closest('a, button, input, textarea, select, [role="button"]')
+      setIsPointer(!!isInteractive)
     }
 
-    const onMouseEnter = () => {
-      setIsHovering(true)
-      gsap.to(cursorRingRef.current, {
-        scale: 1.8,
-        borderColor: 'rgba(255, 50, 30, 0.95)',
-        backgroundColor: 'rgba(255, 40, 20, 0.1)',
-        boxShadow:
-          '0 0 20px rgba(255, 30, 10, 0.6), inset 0 0 10px rgba(255, 30, 10, 0.3)',
-        duration: 0.25,
-        ease: 'power2.out',
-      })
-      gsap.to(cursorDotRef.current, {
-        scale: 2.2,
-        backgroundColor: '#ffffff',
-        boxShadow:
-          '0 0 16px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 50, 30, 0.8)',
-        duration: 0.2,
-        ease: 'power2.out',
-      })
+    // Smooth follow animation for outline
+    const animateOutline = () => {
+      const dx = mouseX - outlineX
+      const dy = mouseY - outlineY
+      
+      outlineX += dx * 0.15
+      outlineY += dy * 0.15
+      
+      cursorOutline.style.left = `${outlineX}px`
+      cursorOutline.style.top = `${outlineY}px`
+      
+      requestAnimationFrame(animateOutline)
     }
 
-    const onMouseLeave = () => {
-      setIsHovering(false)
-      gsap.to(cursorRingRef.current, {
-        scale: 1.0,
-        borderColor: 'rgba(255, 60, 30, 0.6)',
-        backgroundColor: 'transparent',
-        boxShadow:
-          '0 0 0px rgba(0,0,0,0), inset 0 0 0px rgba(0,0,0,0)',
-        duration: 0.25,
-        ease: 'power2.out',
-      })
-      gsap.to(cursorDotRef.current, {
-        scale: 1.0,
-        backgroundColor: '#ff321e',
-        boxShadow:
-          '0 0 10px rgba(255, 50, 30, 0.8), 0 0 20px rgba(255, 50, 30, 0.5)',
-        duration: 0.2,
-        ease: 'power2.out',
-      })
+    // Hide cursor when leaving window
+    const handleMouseLeave = () => {
+      cursorDot.style.opacity = '0'
+      cursorOutline.style.opacity = '0'
     }
 
-    const addHoverEffects = () => {
-      const interactives = document.querySelectorAll(
-        'a, button, [role="button"], .menu-bar__button, .nav-brand, .hero__copy-card'
-      )
-      interactives.forEach((el) => {
-        el.removeEventListener('mouseenter', onMouseEnter)
-        el.removeEventListener('mouseleave', onMouseLeave)
-        el.addEventListener('mouseenter', onMouseEnter)
-        el.addEventListener('mouseleave', onMouseLeave)
-      })
+    const handleMouseEnter = () => {
+      cursorDot.style.opacity = '1'
+      cursorOutline.style.opacity = '1'
     }
 
-    window.addEventListener('mousemove', onMouseMove)
-
-    const timeoutId = setTimeout(() => {
-      addHoverEffects()
-    }, 200)
-
-    const observer = new MutationObserver(() => {
-      addHoverEffects()
-    })
-    observer.observe(document.body, { childList: true, subtree: true })
+    window.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseleave', handleMouseLeave)
+    document.addEventListener('mouseenter', handleMouseEnter)
+    
+    const animationId = requestAnimationFrame(animateOutline)
 
     return () => {
-      window.removeEventListener('mousemove', onMouseMove)
       document.documentElement.classList.remove('custom-cursor-active')
-      observer.disconnect()
-      clearTimeout(timeoutId)
+      window.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseleave', handleMouseLeave)
+      document.removeEventListener('mouseenter', handleMouseEnter)
+      cancelAnimationFrame(animationId)
     }
   }, [])
 
-  if (isTouch) return null
-
   return (
-    <div className={styles.wrap}>
-      <div
-        ref={cursorDotRef}
-        className={`${styles.dot} ${isHovering ? styles.dotHovering : ''}`}
+    <>
+      <div 
+        ref={cursorDotRef} 
+        className={`${styles.cursorDot} ${isPointer ? styles.cursorPointer : ''}`}
       />
-      <div
-        ref={cursorRingRef}
-        className={`${styles.ring} ${isHovering ? styles.ringHovering : ''}`}
+      <div 
+        ref={cursorOutlineRef} 
+        className={`${styles.cursorOutline} ${isPointer ? styles.cursorPointer : ''}`}
       />
-    </div>
+    </>
   )
 }

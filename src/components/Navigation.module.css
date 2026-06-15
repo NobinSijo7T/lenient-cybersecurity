@@ -70,7 +70,7 @@
 
 .menuTooltip {
   position: absolute;
-  bottom: calc(100% + 0.65rem);
+  top: calc(100% + 0.65rem);
   left: 0;
   z-index: 2;
   display: inline-flex;
@@ -95,7 +95,7 @@
   pointer-events: none;
   opacity: 0;
   scale: 0.96;
-  translate: 0 0.35rem;
+  translate: 0 -0.35rem;
   transition:
     opacity 0.22s ease,
     translate 0.22s ease,
