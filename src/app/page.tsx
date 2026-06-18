@@ -19,7 +19,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const learningPath: TimelineEntry[] = [
   {
-    title: 'Day 1: Foundations',
+    title: 'Week 1: Foundations',
     content: (
       <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
         <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">
@@ -40,7 +40,7 @@ const learningPath: TimelineEntry[] = [
     ),
   },
   {
-    title: 'Day 2: Break Things',
+    title: 'Week 2: Break Things',
     content: (
       <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
         <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">
@@ -63,7 +63,7 @@ const learningPath: TimelineEntry[] = [
     ),
   },
   {
-    title: 'Day 3: Build Defenses',
+    title: 'Week 3: Build Defenses',
     content: (
       <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
         <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">
@@ -86,7 +86,7 @@ const learningPath: TimelineEntry[] = [
     ),
   },
   {
-    title: 'Day 4: Ship Proof',
+    title: 'Week 4: Ship Proof',
     content: (
       <div className="max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-8">
         <p className="mb-5 text-base leading-relaxed text-[#ffe8e4]/75 md:text-lg">
@@ -277,7 +277,7 @@ export default function HomePage() {
             Choose your path and start mastering cybersecurity with hands-on
             labs and real-world challenges.
           </p>
-          <CTAButton className={styles.ctaButton} />
+          <CTAButton href="https://whatsapp.com/channel/0029Vb5XhFRICVfhgaoKYN2A" className={styles.ctaButton} />
         </div>
 
         {/* Google Gemini Effect — scroll-driven lines */}

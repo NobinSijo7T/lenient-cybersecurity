@@ -3,6 +3,7 @@
 import {
   motion,
   useMotionTemplate,
+  useInView,
   useReducedMotion,
   useScroll,
   useSpring,
@@ -26,6 +27,12 @@ interface TypewriterTextProps {
   className?: string;
   startProgress?: number;
   endProgress?: number;
+}
+
+interface TypingRevealTextProps {
+  text: string;
+  active: boolean;
+  className?: string;
 }
 
 interface TypewriterCharProps {
@@ -57,6 +64,7 @@ const TypewriterChar = ({
     <motion.span
       className={styles.typewriterChar}
       style={{ opacity, y, filter }}
+      aria-hidden="true"
     >
       {char}
     </motion.span>
@@ -75,7 +83,10 @@ const TypewriterText = ({
   let charIndex = 0;
 
   return (
-    <div className={[className, styles.typewriterText].filter(Boolean).join(" ")}>
+    <div
+      className={[className, styles.typewriterText].filter(Boolean).join(" ")}
+      aria-label={text}
+    >
       {words.map((word, wordIndex) => (
         <span className={styles.typewriterWord} key={`${word}-${wordIndex}`}>
           {word.split("").map((char) => {
@@ -97,6 +108,33 @@ const TypewriterText = ({
         </span>
       ))}
     </div>
+  );
+};
+
+const TypingRevealText = ({ text, active, className }: TypingRevealTextProps) => {
+  const typingStyle = {
+    "--typing-characters": text.length,
+    "--typing-duration": `${Math.min(2.2, Math.max(1.15, text.length * 0.085))}s`,
+  } as React.CSSProperties;
+
+  return (
+    <h3
+      className={[className, styles.typingReveal].filter(Boolean).join(" ")}
+      style={typingStyle}
+      aria-label={text}
+    >
+      <span
+        className={[
+          styles.typingRevealText,
+          active ? styles.typingRevealTextActive : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+        aria-hidden="true"
+      >
+        {text}
+      </span>
+    </h3>
   );
 };
 
@@ -421,6 +459,7 @@ const TimelineSection = ({
 }: TimelineSectionProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const shouldReduceMotion = useReducedMotion();
+  const titleIsInView = useInView(sectionRef, { amount: 0.42 });
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
@@ -564,6 +603,7 @@ const TimelineSection = ({
     [0.04, 0.94],
     levelIndex % 2 === 0 ? [-8, 8] : [8, -8]
   );
+  const titleTypingActive = !shouldReduceMotion && titleIsInView;
 
   return (
     <section ref={sectionRef} className={styles.section}>
@@ -640,13 +680,26 @@ const TimelineSection = ({
           {shouldReduceMotion ? (
             <h3 className={styles.storyTitle}>{item.title}</h3>
           ) : (
-            <TypewriterText
-              text={item.title}
-              progress={smoothProgress}
-              className={styles.storyTitle}
-              startProgress={0.08}
-              endProgress={0.28}
-            />
+            <motion.div
+              style={{
+                opacity: titleOpacity,
+                x: titleX,
+                y: titleY,
+                scale: titleScale,
+                rotateX: titleRotateX,
+                rotateZ: titleRotateZ,
+                skewX: titleSkewX,
+                scaleX: titleScaleX,
+                letterSpacing: titleLetterSpacing,
+                filter: titleFilter,
+              }}
+            >
+              <TypingRevealText
+                text={item.title}
+                active={titleTypingActive}
+                className={styles.storyTitle}
+              />
+            </motion.div>
           )}
           <motion.div
             className={styles.storyContent}

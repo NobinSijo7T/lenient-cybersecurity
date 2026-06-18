@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { JetBrains_Mono } from "next/font/google";
 import { cn } from "@/lib/utils";
+import BackgroundMusic from '@/components/BackgroundMusic'
 
 const jetbrainsMono = JetBrains_Mono({subsets:['latin'],variable:'--font-mono'});
 
@@ -28,7 +29,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={cn("font-mono", jetbrainsMono.variable)}>
-      <body>{children}</body>
+      <body>
+        <BackgroundMusic />
+        {children}
+      </body>
     </html>
   )
 }

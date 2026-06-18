@@ -443,6 +443,56 @@
   will-change: transform, opacity;
 }
 
+.typewriterText {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.32em;
+  row-gap: 0.08em;
+  position: relative;
+}
+
+.typewriterWord {
+  display: inline-flex;
+  white-space: nowrap;
+}
+
+.typewriterChar {
+  display: inline-block;
+  transform-origin: bottom center;
+  will-change: transform, opacity, filter;
+}
+
+.heading.typewriterText,
+.storyTitle.typewriterText {
+  column-gap: 0.18em;
+}
+
+.storyTitle.typewriterText {
+  flex-wrap: nowrap;
+}
+
+.typingReveal {
+  display: block;
+}
+
+.typingRevealText {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+  text-shadow:
+    0 5px 35px rgb(0 0 0 / 0.75),
+    0 0 20px rgb(255 70 48 / 0.35);
+  will-change: clip-path, opacity;
+}
+
+.typingRevealTextActive {
+  animation: typingReveal var(--typing-duration, 1.6s) steps(var(--typing-characters, 16), end) both;
+}
+
 .description {
   max-width: 39rem;
   margin: 1.3rem 0 0;
@@ -914,6 +964,17 @@
   }
   100% {
     background-position: 0 56px, center;
+  }
+}
+
+@keyframes typingReveal {
+  0% {
+    opacity: 1;
+    clip-path: inset(0 100% 0 0);
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
   }
 }
 

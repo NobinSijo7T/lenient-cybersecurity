@@ -81,16 +81,20 @@ export default function Navigation() {
 
   // Entrance animation
   useEffect(() => {
-    if (navBarRef.current) {
-      gsap.from(navBarRef.current, {
-        opacity: 0,
-        y: -22,
-        filter: 'blur(12px)',
-        duration: 0.9,
-        ease: 'power3.out',
-        delay: 0.2,
-      })
-    }
+    const ctx = gsap.context(() => {
+      if (navBarRef.current) {
+        gsap.from(navBarRef.current, {
+          opacity: 0,
+          y: -22,
+          filter: 'blur(12px)',
+          duration: 0.9,
+          ease: 'power3.out',
+          delay: 0.2,
+        })
+      }
+    })
+    
+    return () => ctx.revert()
   }, [])
 
   return (
@@ -153,6 +157,10 @@ export default function Navigation() {
           })}
         </div>
       </nav>
+
+      <a href="https://whatsapp.com/channel/0029Vb5XhFRICVfhgaoKYN2A" className={styles.registerButton}>
+        <span>Register</span>
+      </a>
     </header>
   )
 }
