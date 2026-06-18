@@ -10,7 +10,11 @@ interface CTAButtonProps {
   className?: string
 }
 
-export default function CTAButton({ href = '#', onClick, className }: CTAButtonProps) {
+export default function CTAButton({
+  href = '#',
+  onClick,
+  className,
+}: CTAButtonProps) {
   const buttonRef = useRef<HTMLAnchorElement>(null)
   const glowRef = useRef<HTMLSpanElement>(null)
 
@@ -19,7 +23,6 @@ export default function CTAButton({ href = '#', onClick, className }: CTAButtonP
     const glow = glowRef.current
     if (!button || !glow) return
 
-    // Hover effect
     const handleMouseEnter = () => {
       gsap.to(glow, {
         scale: 1.15,

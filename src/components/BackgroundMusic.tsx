@@ -1,48 +1,93 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Volume2, VolumeX } from 'lucide-react'
+import styles from './BackgroundMusic.module.css'
 
 export default function BackgroundMusic() {
   const audioRef = useRef<HTMLAudioElement>(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [isBlocked, setIsBlocked] = useState(false)
 
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
 
     audio.volume = 0.35
+    audio.loop = true
+    audio.load()
 
-    const startPlayback = () => {
-      audio.play().catch(() => {
-        // Autoplay can be blocked until the user interacts with the page.
+    const unlockEvents = ['pointerdown', 'click', 'keydown', 'touchstart'] as const
+
+    const removeUnlockListeners = () => {
+      unlockEvents.forEach((eventName) => {
+        document.removeEventListener(eventName, startPlayback, true)
       })
+    }
+
+    const startPlayback = async () => {
+      try {
+        audio.muted = false
+        await audio.play()
+        setIsPlaying(true)
+        setIsBlocked(false)
+        removeUnlockListeners()
+      } catch {
+        setIsBlocked(true)
+      }
     }
 
     startPlayback()
 
-    const unlockPlayback = () => {
-      startPlayback()
-    }
-
-    window.addEventListener('pointerdown', unlockPlayback, { once: true })
-    window.addEventListener('keydown', unlockPlayback, { once: true })
-    window.addEventListener('touchstart', unlockPlayback, { once: true })
+    unlockEvents.forEach((eventName) => {
+      document.addEventListener(eventName, startPlayback, true)
+    })
 
     return () => {
-      window.removeEventListener('pointerdown', unlockPlayback)
-      window.removeEventListener('keydown', unlockPlayback)
-      window.removeEventListener('touchstart', unlockPlayback)
+      removeUnlockListeners()
       audio.pause()
     }
   }, [])
 
+  const togglePlayback = async () => {
+    const audio = audioRef.current
+    if (!audio) return
+
+    if (audio.paused) {
+      try {
+        audio.muted = false
+        await audio.play()
+        setIsPlaying(true)
+        setIsBlocked(false)
+      } catch {
+        setIsBlocked(true)
+      }
+      return
+    }
+
+    audio.pause()
+    setIsPlaying(false)
+  }
+
   return (
-    <audio
-      ref={audioRef}
-      src="/bg_music.mp3"
-      preload="auto"
-      loop
-      aria-hidden="true"
-      className="hidden"
-    />
+    <>
+      <audio
+        ref={audioRef}
+        src="/bg_music.mp3"
+        preload="auto"
+        loop
+        playsInline
+        aria-hidden="true"
+      />
+      <button
+        type="button"
+        className={`${styles.toggle} ${isBlocked ? styles.needsInteraction : ''}`}
+        onClick={togglePlayback}
+        aria-label={isPlaying ? 'Pause background music' : 'Play background music'}
+        title={isPlaying ? 'Pause background music' : 'Play background music'}
+      >
+        {isPlaying ? <Volume2 size={18} /> : <VolumeX size={18} />}
+      </button>
+    </>
   )
 }

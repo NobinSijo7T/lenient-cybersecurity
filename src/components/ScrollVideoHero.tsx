@@ -113,24 +113,26 @@ const ScrollVideoHero = ({ src, poster, className, children, id }: ScrollVideoHe
       ? () => `+=${window.innerHeight * 2.5}`   // 250vh on mobile
       : () => `+=${window.innerHeight * 4}`      // 400vh on desktop
 
-    const st = ScrollTrigger.create({
-      trigger: section,
-      start: 'top top',
-      end: scrollEnd,
-      pin: true,
-      pinSpacer: spacer,
-      anticipatePin: 1,
-      scrub: 1,  // Recommended scrub value for smooth motion
-      invalidateOnRefresh: true,
-      fastScrollEnd: true,
-      onUpdate: (self) => {
-        const duration = durationRef.current
-        if (duration > 0) {
-          // CRITICAL: Only store target, never update video here
-          targetTimeRef.current = self.progress * duration
-        }
-      },
-    })
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: scrollEnd,
+        pin: true,
+        pinSpacer: spacer,
+        anticipatePin: 1,
+        scrub: 1,  // Recommended scrub value for smooth motion
+        invalidateOnRefresh: true,
+        fastScrollEnd: true,
+        onUpdate: (self) => {
+          const duration = durationRef.current
+          if (duration > 0) {
+            // CRITICAL: Only store target, never update video here
+            targetTimeRef.current = self.progress * duration
+          }
+        },
+      })
+    }, spacer)
 
     // ── Pause ticker when browser tab hidden ───────────────────────
     const onVisibility = () => {
@@ -162,7 +164,7 @@ const ScrollVideoHero = ({ src, poster, className, children, id }: ScrollVideoHe
         cancelAnimationFrame(rafIdRef.current)
         rafIdRef.current = null
       }
-      st.kill()
+      ctx.revert()
       io.disconnect()
       document.removeEventListener('visibilitychange', onVisibility)
       video.removeEventListener('loadedmetadata', onMetadata)

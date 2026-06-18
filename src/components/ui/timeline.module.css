@@ -474,11 +474,13 @@
 
 .typingReveal {
   display: block;
+  width: max-content;
+  max-width: calc(100vw - clamp(2.5rem, 14vw, 14rem));
 }
 
 .typingRevealText {
   display: inline-block;
-  max-width: 100%;
+  max-width: inherit;
   overflow: hidden;
   white-space: nowrap;
   opacity: 0;
@@ -510,7 +512,7 @@
 
 .story {
   position: relative;
-  width: min(100%, 44rem);
+  width: min(100%, 64rem);
   margin-left: auto;
   perspective: 1200px;
   will-change: transform, opacity;
@@ -521,7 +523,7 @@
   z-index: 2;
   margin-bottom: 1rem;
   color: #ff9b8e;
-  font-size: clamp(2rem, 4vw, 4.4rem);
+  font-size: clamp(2rem, 3.5vw, 3.9rem);
   line-height: 1.05;
   will-change: transform, opacity, filter;
   transform-origin: center left;
@@ -1091,6 +1093,22 @@
 
   .story {
     margin-left: 0;
+    width: 100%;
+  }
+
+  .typingReveal {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .typingRevealText {
+    white-space: normal;
+  }
+
+  .storyTitle {
+    font-size: clamp(1.7rem, 9vw, 2.8rem);
+    line-height: 1.12;
+    white-space: normal;
   }
 
   .storyContent {
